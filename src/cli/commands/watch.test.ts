@@ -130,7 +130,9 @@ describe('runWatch', () => {
 		vi.mocked(generate).mockReturnValueOnce({
 			generated: 0,
 			skipped: 0,
-			errors: [{ filePath: 'test.prompt.md', message: 'Parse error', type: 'parse' }],
+			errors: [
+				{ filePath: 'test.prompt.md', message: 'Parse error', type: 'parse' },
+			],
 			warnings: [],
 		});
 
@@ -140,7 +142,9 @@ describe('runWatch', () => {
 		vi.mocked(generate).mockReturnValueOnce({
 			generated: 0,
 			skipped: 0,
-			errors: [{ filePath: 'bad.prompt.md', message: 'Syntax error', type: 'parse' }],
+			errors: [
+				{ filePath: 'bad.prompt.md', message: 'Syntax error', type: 'parse' },
+			],
 			warnings: [],
 		});
 

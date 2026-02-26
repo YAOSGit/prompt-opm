@@ -1,46 +1,39 @@
 {
-  "generatedAt": "2026-02-26T22:40:37.075Z",
-  "files": {
-    "classify.prompt.md": {
-      "version": "1.0.0",
-      "contentHash": "e407828694f918298bb4a665666aba25cab513c4bd422f55e7ecca00ba26db83",
-      "inputsHash": "5ed19e29816baef0a55892103dafba09bd642225267103e2165ad3ab00e7fc99",
-      "outputsHash": "d245ca2f91571d7109d29f781d6e66da74ef989965cb945826442bcdfe66f833",
-      "dependencies": []
-    },
-    "email/welcomeEmail.prompt.md": {
-      "version": "1.0.1",
-      "contentHash": "6bb41dd06f18294928895df4b08623fa7e60215bcab9003315dc865355cc64e0",
-      "inputsHash": "a57e45785a962e717954d292d3b4451f288b519e3f2e0a6953b7e6f5d88a0825",
-      "outputsHash": "696969fd52c081381a7ffc70b0bdf8293f818ae810e4e7772c8053ee153033ed",
-      "dependencies": [
-        "persona.prompt.md",
-        "email/signoff.prompt.md"
-      ],
-      "tokenEstimate": 78,
-      "inputTokenEstimate": 68
-    },
-    "generateBio.prompt.md": {
-      "version": "1.0.1",
-      "contentHash": "060b8ccfdbee4f7942edb7e4a6852306be105407bc4a1221ddb2c2e1fe12bfc7",
-      "inputsHash": "ba49bb3148af8f61cf33823106367616f3504b71138bab29c3c3dfddbab7c679",
-      "outputsHash": "924d443852a4c78b378a30964cc032653af9b9cf05f83305488e9ca974ccb395",
-      "dependencies": [
-        "persona.prompt.md"
-      ],
-      "tokenEstimate": 50,
-      "inputTokenEstimate": 46
-    },
-    "shared/codeReview.prompt.md": {
-      "version": "1.0.1",
-      "contentHash": "a1ebe4742c8d1c11b1d147bd98f8c6e0746ff20637c724fc8d79a0e1245b89aa",
-      "inputsHash": "adb8d5556595bd1fc8a2776d83550163505412450e927b3eeaf3a9b8561efb2a",
-      "outputsHash": "5a021919061084b3c8b20ee8bbfa7e58600f33307efadb41d127d9da67b5fba7",
-      "dependencies": [
-        "persona.prompt.md"
-      ],
-      "tokenEstimate": 93,
-      "inputTokenEstimate": 78
-    }
-  }
+	"generatedAt": "2026-02-26T22:53:24.896Z",
+	"files": {
+		"classify.prompt.md": {
+			"version": "1.0.0",
+			"contentHash": "e407828694f918298bb4a665666aba25cab513c4bd422f55e7ecca00ba26db83",
+			"inputsHash": "5ed19e29816baef0a55892103dafba09bd642225267103e2165ad3ab00e7fc99",
+			"outputsHash": "d245ca2f91571d7109d29f781d6e66da74ef989965cb945826442bcdfe66f833",
+			"dependencies": []
+		},
+		"email/welcomeEmail.prompt.md": {
+			"version": "1.0.2",
+			"contentHash": "4418c517e7894fd46d1321027ecdea93c00febf12b97d62bef51f85485cb79b3",
+			"inputsHash": "a57e45785a962e717954d292d3b4451f288b519e3f2e0a6953b7e6f5d88a0825",
+			"outputsHash": "696969fd52c081381a7ffc70b0bdf8293f818ae810e4e7772c8053ee153033ed",
+			"dependencies": ["persona.prompt.md", "email/signoff.prompt.md"],
+			"tokenEstimate": 78,
+			"inputTokenEstimate": 68
+		},
+		"generateBio.prompt.md": {
+			"version": "1.0.2",
+			"contentHash": "bfd0c18d3b6297d38f1c940a018787ea2647b84fa4f2542fc14434a9d51b53e5",
+			"inputsHash": "ba49bb3148af8f61cf33823106367616f3504b71138bab29c3c3dfddbab7c679",
+			"outputsHash": "924d443852a4c78b378a30964cc032653af9b9cf05f83305488e9ca974ccb395",
+			"dependencies": ["persona.prompt.md"],
+			"tokenEstimate": 50,
+			"inputTokenEstimate": 46
+		},
+		"shared/codeReview.prompt.md": {
+			"version": "1.0.2",
+			"contentHash": "c2958c310d89655b5476012e650dece08e0526f66bdfab126b6c2704160862a3",
+			"inputsHash": "adb8d5556595bd1fc8a2776d83550163505412450e927b3eeaf3a9b8561efb2a",
+			"outputsHash": "5a021919061084b3c8b20ee8bbfa7e58600f33307efadb41d127d9da67b5fba7",
+			"dependencies": ["persona.prompt.md"],
+			"tokenEstimate": 93,
+			"inputTokenEstimate": 78
+		}
+	}
 }

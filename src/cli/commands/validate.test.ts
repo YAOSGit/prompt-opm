@@ -17,9 +17,9 @@ beforeEach(() => {
 		}),
 	);
 
-	vi.spyOn(console, 'log').mockImplementation(() => { });
-	vi.spyOn(console, 'warn').mockImplementation(() => { });
-	vi.spyOn(console, 'error').mockImplementation(() => { });
+	vi.spyOn(console, 'log').mockImplementation(() => {});
+	vi.spyOn(console, 'warn').mockImplementation(() => {});
+	vi.spyOn(console, 'error').mockImplementation(() => {});
 });
 
 afterEach(() => {
@@ -93,9 +93,7 @@ describe('runValidate', () => {
 
 		runValidate(TEST_DIR);
 
-		expect(console.warn).toHaveBeenCalledWith(
-			expect.stringContaining('WARN:'),
-		);
+		expect(console.warn).toHaveBeenCalledWith(expect.stringContaining('WARN:'));
 	});
 
 	it('reports missing snippets as errors', () => {
@@ -162,7 +160,9 @@ describe('runValidate', () => {
 		runValidate(TEST_DIR);
 
 		expect(console.error).toHaveBeenCalledWith(
-			expect.stringContaining('Variable "{{ missing }}" used in body but not declared in inputs'),
+			expect.stringContaining(
+				'Variable "{{ missing }}" used in body but not declared in inputs',
+			),
 		);
 		expect(process.exitCode).toBe(1);
 	});
@@ -176,7 +176,9 @@ describe('runValidate', () => {
 		runValidate(TEST_DIR);
 
 		expect(console.error).toHaveBeenCalledWith(
-			expect.stringContaining('Variable "{{ missing }}" used in body but not declared in inputs'),
+			expect.stringContaining(
+				'Variable "{{ missing }}" used in body but not declared in inputs',
+			),
 		);
 		expect(process.exitCode).toBe(1);
 	});

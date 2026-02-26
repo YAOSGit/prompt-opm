@@ -1,12 +1,13 @@
 import { createHash } from 'node:crypto';
+import type { SchemaValue } from '../types/index.js';
 
 export function hashContent(content: string): string {
 	return createHash('sha256').update(content).digest('hex');
 }
 
 export function hashInputsOutputs(
-	inputs: Record<string, string> | undefined,
-	outputs: Record<string, string> | undefined,
+	inputs: Record<string, SchemaValue> | undefined,
+	outputs: Record<string, SchemaValue> | undefined,
 ): string {
 	const sortedInputs = Object.entries(inputs ?? {}).sort(([a], [b]) =>
 		a.localeCompare(b),

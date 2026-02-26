@@ -1,10 +1,17 @@
 import { readFileSync } from 'node:fs';
 import { basename, relative } from 'node:path';
-import type { AnalyzeResult, OpmConfig, PromptAnalysis } from '../types/index.js';
+import type {
+	AnalyzeResult,
+	OpmConfig,
+	PromptAnalysis,
+} from '../types/index.js';
 import { parsePromptFile } from './parser.js';
 import { scanPromptFiles } from './scanner.js';
 import { resolveSnippets } from './snippet-resolver.js';
-import { estimateFixedTokens, estimateTemplateTokens } from './token-estimator.js';
+import {
+	estimateFixedTokens,
+	estimateTemplateTokens,
+} from './token-estimator.js';
 
 export function analyze(config: OpmConfig): AnalyzeResult {
 	const { source } = config;
@@ -42,10 +49,7 @@ export function analyze(config: OpmConfig): AnalyzeResult {
 			});
 
 			dependencyGraph[moduleName] = dependencies;
-		} catch {
-			// Skip files with parse errors — validate command handles those
-			continue;
-		}
+		} catch {}
 	}
 
 	const totalTokens = prompts.reduce((sum, p) => sum + p.tokenEstimate, 0);

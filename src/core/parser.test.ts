@@ -47,7 +47,8 @@ describe('parsePromptFile', () => {
 	});
 
 	it('parses nested inputs', () => {
-		const prompt = '---\nmodel: test\ninputs:\n  user:\n    name: string\n---\nHello';
+		const prompt =
+			'---\nmodel: test\ninputs:\n  user:\n    name: string\n---\nHello';
 		const result = parsePromptFile(prompt, '/test.prompt.md');
 		expect(result.frontmatter.inputs).toEqual({ user: { name: 'string' } });
 	});

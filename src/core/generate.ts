@@ -12,7 +12,10 @@ import { generateBarrelContent, generateFileContent } from './emitter.js';
 import { parsePromptFile } from './parser.js';
 import { scanPromptFiles } from './scanner.js';
 import { resolveSnippets } from './snippet-resolver.js';
-import { estimateFixedTokens, estimateTemplateTokens } from './token-estimator.js';
+import {
+	estimateFixedTokens,
+	estimateTemplateTokens,
+} from './token-estimator.js';
 import { bumpVersion, determineVersionBump } from './version-manager.js';
 
 export type GenerateResult = {

@@ -1,3 +1,4 @@
+import type { SchemaValue } from '../types/index.js';
 import { mapSchemaToZodObjectString } from './schema-mapper.js';
 
 export type EmitInput = {
@@ -11,8 +12,8 @@ export type EmitInput = {
 		tokenEstimate: number;
 		inputTokenEstimate: number;
 	};
-	inputs: Record<string, string>;
-	outputs: Record<string, string>;
+	inputs: Record<string, SchemaValue>;
+	outputs: Record<string, SchemaValue>;
 	template: string;
 };
 
@@ -93,7 +94,7 @@ export const prompt = (inputs: InputType): string => {
 \t// Handle variables with defaults: {{ key | "default" }}
 \tconst VARIABLE_WITH_DEFAULT_RE = /\\{\\{\\s*([a-zA-Z_]\\w*)\\s*\\|\\s*"([^"]*)"\\s*\\}\\}/g;
 \tresult = result.replace(VARIABLE_WITH_DEFAULT_RE, (_, key, defaultValue) => {
-\t\tconst value = (validated as any)[key];
+\t\tconst value = (validated as Record<string, unknown>)[key];
 \t\tif (value === undefined || value === null) return defaultValue;
 \t\treturn Array.isArray(value) ? value.join(", ") : String(value);
 \t});

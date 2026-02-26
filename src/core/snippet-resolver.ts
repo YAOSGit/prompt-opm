@@ -1,11 +1,11 @@
 import { readFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
-import type { PromptFile } from '../types/index.js';
+import type { PromptFile, SchemaValue } from '../types/index.js';
 import { parsePromptFile } from './parser.js';
 
 export type ResolvedPrompt = {
 	body: string;
-	mergedInputs: Record<string, string>;
+	mergedInputs: Record<string, SchemaValue>;
 	warnings: string[];
 	resolvedDependencies: string[];
 };
@@ -26,7 +26,7 @@ export function resolveSnippets(
 	visited.add(absolutePath);
 
 	const warnings: string[] = [];
-	const mergedInputs: Record<string, string> = {
+	const mergedInputs: Record<string, SchemaValue> = {
 		...(file.frontmatter.inputs ?? {}),
 	};
 	const resolvedDependencies: string[] = [];
@@ -57,9 +57,9 @@ export function resolveSnippets(
 		resolvedDependencies.push(...resolved.resolvedDependencies);
 
 		for (const [key, type] of Object.entries(resolved.mergedInputs)) {
-			if (mergedInputs[key] && mergedInputs[key] !== type) {
+			if (mergedInputs[key] && !isEqual(mergedInputs[key], type)) {
 				throw new Error(
-					`Conflict: variable "${key}" declared as "${mergedInputs[key]}" in ${file.filePath} and "${type}" in ${snippetPath}`,
+					`Conflict: variable "${key}" declared as "${JSON.stringify(mergedInputs[key])}" in ${file.filePath} and "${JSON.stringify(type)}" in ${snippetPath}`,
 				);
 			}
 			mergedInputs[key] = type;
@@ -91,4 +91,22 @@ function resolveSnippetPath(
 	} catch {
 		throw new Error(`Snippet not found: {{ ${ref} }} — looked for ${fullPath}`);
 	}
+}
+
+function isEqual(a: SchemaValue, b: SchemaValue): boolean {
+	if (typeof a === 'string' && typeof b === 'string') {
+		return a === b;
+	}
+	if (
+		typeof a === 'object' &&
+		typeof b === 'object' &&
+		a !== null &&
+		b !== null
+	) {
+		const keysA = Object.keys(a);
+		const keysB = Object.keys(b);
+		if (keysA.length !== keysB.length) return false;
+		return keysA.every((key) => isEqual(a[key], b[key]));
+	}
+	return false;
 }

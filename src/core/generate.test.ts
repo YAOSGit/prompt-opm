@@ -130,7 +130,10 @@ describe('generate', () => {
 	});
 
 	it('uses custom manifest directory when configured', () => {
-		const manifestDir = join(import.meta.dirname, '../../.test-manifest-custom');
+		const manifestDir = join(
+			import.meta.dirname,
+			'../../.test-manifest-custom',
+		);
 		mkdirSync(manifestDir, { recursive: true });
 
 		writeFileSync(
@@ -141,8 +144,12 @@ describe('generate', () => {
 		const customConfig: OpmConfig = { ...config, manifest: manifestDir };
 		generate(customConfig);
 
-		expect(existsSync(join(manifestDir, '.prompt-opm.manifest.json'))).toBe(true);
-		expect(existsSync(join(TEST_OUTPUT, '.prompt-opm.manifest.json'))).toBe(false);
+		expect(existsSync(join(manifestDir, '.prompt-opm.manifest.json'))).toBe(
+			true,
+		);
+		expect(existsSync(join(TEST_OUTPUT, '.prompt-opm.manifest.json'))).toBe(
+			false,
+		);
 
 		rmSync(manifestDir, { recursive: true });
 	});
@@ -162,12 +169,14 @@ describe('generate', () => {
 		// tokenEstimate should be a positive integer
 		const tokenMatch = output.match(/tokenEstimate:\s*(\d+)/);
 		expect(tokenMatch).not.toBeNull();
-		expect(Number(tokenMatch![1])).toBeGreaterThan(0);
+		expect(Number(tokenMatch?.[1])).toBeGreaterThan(0);
 
 		// inputTokenEstimate should be <= tokenEstimate
 		const inputTokenMatch = output.match(/inputTokenEstimate:\s*(\d+)/);
 		expect(inputTokenMatch).not.toBeNull();
-		expect(Number(inputTokenMatch![1])).toBeLessThanOrEqual(Number(tokenMatch![1]));
+		expect(Number(inputTokenMatch?.[1])).toBeLessThanOrEqual(
+			Number(tokenMatch?.[1]),
+		);
 	});
 
 	it('stores token estimates in manifest', () => {

@@ -29,7 +29,9 @@ describe('analyze', () => {
 		expect(result.prompts[0].model).toBe('test-model');
 		expect(result.prompts[0].version).toBe('1.0.0');
 		expect(result.prompts[0].tokenEstimate).toBeGreaterThan(0);
-		expect(result.prompts[0].inputTokenEstimate).toBeLessThanOrEqual(result.prompts[0].tokenEstimate);
+		expect(result.prompts[0].inputTokenEstimate).toBeLessThanOrEqual(
+			result.prompts[0].tokenEstimate,
+		);
 		expect(result.prompts[0].variables).toEqual(['name']);
 		expect(result.prompts[0].snippets).toEqual([]);
 		expect(result.prompts[0].dependencies).toEqual([]);
@@ -64,7 +66,7 @@ describe('analyze', () => {
 		const result = analyze(config);
 
 		expect(result.prompts).toHaveLength(1); // snippet excluded
-		expect(result.dependencyGraph['main']).toContain('shared.prompt.md');
+		expect(result.dependencyGraph.main).toContain('shared.prompt.md');
 	});
 
 	it('skips snippet-only files from prompt list', () => {
@@ -92,10 +94,7 @@ describe('analyze', () => {
 			join(TEST_SOURCE, 'good.prompt.md'),
 			'---\nmodel: test\n---\nGood prompt.',
 		);
-		writeFileSync(
-			join(TEST_SOURCE, 'bad.prompt.md'),
-			'no frontmatter at all',
-		);
+		writeFileSync(join(TEST_SOURCE, 'bad.prompt.md'), 'no frontmatter at all');
 
 		const result = analyze(config);
 

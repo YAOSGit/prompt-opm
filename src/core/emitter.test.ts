@@ -93,7 +93,9 @@ describe('generateFileContent', () => {
 		});
 
 		expect(result).toContain('const VARIABLE_WITH_DEFAULT_RE =');
-		expect(result).toContain('if (value === undefined || value === null) return defaultValue;');
+		expect(result).toContain(
+			'if (value === undefined || value === null) return defaultValue;',
+		);
 	});
 });
 

@@ -1,7 +1,9 @@
+import type { SchemaValue } from '../types/index.js';
+
 const ENUM_RE = /^enum\((.+)\)$/;
 const ARRAY_RE = /^(\w+)\[\]$/;
 
-export function mapTypeToZod(type: any): string {
+export function mapTypeToZod(type: SchemaValue): string {
 	if (typeof type === 'object' && type !== null) {
 		return mapSchemaToZodObjectString(type);
 	}
@@ -32,7 +34,7 @@ export function mapTypeToZod(type: any): string {
 }
 
 export function mapSchemaToZodObjectString(
-	schema: Record<string, any>,
+	schema: Record<string, SchemaValue>,
 ): string {
 	const entries = Object.entries(schema);
 	if (entries.length === 0) {

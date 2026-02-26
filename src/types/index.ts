@@ -5,13 +5,15 @@ export type Config = {
 	maxTokens?: number;
 } & Record<string, unknown>;
 
+export type SchemaValue = string | { [key: string]: SchemaValue };
+
 export type FrontMatter = {
 	model: string;
 	version?: string;
 	snippet?: boolean;
 	config?: Config;
-	inputs?: Record<string, any>;
-	outputs?: Record<string, any>;
+	inputs?: Record<string, SchemaValue>;
+	outputs?: Record<string, SchemaValue>;
 };
 
 export type PromptFile = {

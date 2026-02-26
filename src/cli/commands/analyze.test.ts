@@ -34,15 +34,11 @@ describe('runAnalyze', () => {
 
 		runAnalyze(TEST_DIR, { json: false });
 
-		expect(console.log).toHaveBeenCalledWith(
-			expect.stringContaining('hello'),
-		);
+		expect(console.log).toHaveBeenCalledWith(expect.stringContaining('hello'));
 		expect(console.log).toHaveBeenCalledWith(
 			expect.stringContaining('test-model'),
 		);
-		expect(console.log).toHaveBeenCalledWith(
-			expect.stringContaining('Tokens'),
-		);
+		expect(console.log).toHaveBeenCalledWith(expect.stringContaining('Tokens'));
 	});
 
 	it('displays dependency graph', () => {
@@ -74,9 +70,14 @@ describe('runAnalyze', () => {
 		runAnalyze(TEST_DIR, { json: true });
 
 		// Find the JSON output call
-		const calls = (console.log as any).mock.calls;
+		const calls = vi.mocked(console.log).mock.calls;
 		const jsonCall = calls.find((c: string[]) => {
-			try { JSON.parse(c[0]); return true; } catch { return false; }
+			try {
+				JSON.parse(c[0]);
+				return true;
+			} catch {
+				return false;
+			}
 		});
 		expect(jsonCall).toBeDefined();
 

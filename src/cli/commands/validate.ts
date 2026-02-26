@@ -22,10 +22,11 @@ export function runValidate(cwd: string): void {
 			const declaredInputs = Object.keys(resolved.mergedInputs).map((k) =>
 				k.endsWith('?') ? k.slice(0, -1) : k,
 			);
-			const usedVariables = resolved.body
-				.match(/\{\{\s*([a-zA-Z_]\w*)(?:\s*\|\s*"[^"]*")?\s*\}\}/g)
-				?.map((m) => m.match(/\{\{\s*([a-zA-Z_]\w*)/)![1])
-				.filter((v) => !v.startsWith('@')) || [];
+			const usedVariables =
+				resolved.body
+					.match(/\{\{\s*([a-zA-Z_]\w*)(?:\s*\|\s*"[^"]*")?\s*\}\}/g)
+					?.map((m) => m.match(/\{\{\s*([a-zA-Z_]\w*)/)?.[1] ?? '')
+					.filter((v) => v !== '' && !v.startsWith('@')) || [];
 
 			const uniqueUsed = [...new Set(usedVariables)];
 

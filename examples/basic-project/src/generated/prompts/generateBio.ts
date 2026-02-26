@@ -1,6 +1,6 @@
-import { z } from "zod";
+import { z } from 'zod';
 
-export const model = "gemini-1.5-pro" as const;
+export const model = 'gemini-1.5-pro' as const;
 
 export const configs = {
 	temperature: 0.7,
@@ -8,10 +8,11 @@ export const configs = {
 } as const;
 
 export const meta = {
-	version: "1.0.1",
-	lastUpdated: "2026-02-26T22:40:37.093Z",
-	sourceFile: "generateBio.prompt.md",
-	contentHash: "060b8ccfdbee4f7942edb7e4a6852306be105407bc4a1221ddb2c2e1fe12bfc7",
+	version: '1.0.2',
+	lastUpdated: '2026-02-26T22:53:24.913Z',
+	sourceFile: 'generateBio.prompt.md',
+	contentHash:
+		'bfd0c18d3b6297d38f1c940a018787ea2647b84fa4f2542fc14434a9d51b53e5',
 	tokenEstimate: 50,
 	inputTokenEstimate: 46,
 } as const;
@@ -39,15 +40,16 @@ export const prompt = (inputs: InputType): string => {
 	let result = template;
 
 	// Handle variables with defaults: {{ key | "default" }}
-	const VARIABLE_WITH_DEFAULT_RE = /\{\{\s*([a-zA-Z_]\w*)\s*\|\s*"([^"]*)"\s*\}\}/g;
+	const VARIABLE_WITH_DEFAULT_RE =
+		/\{\{\s*([a-zA-Z_]\w*)\s*\|\s*"([^"]*)"\s*\}\}/g;
 	result = result.replace(VARIABLE_WITH_DEFAULT_RE, (_, key, defaultValue) => {
-		const value = (validated as any)[key];
+		const value = (validated as Record<string, unknown>)[key];
 		if (value === undefined || value === null) return defaultValue;
-		return Array.isArray(value) ? value.join(", ") : String(value);
+		return Array.isArray(value) ? value.join(', ') : String(value);
 	});
 
 	for (const [key, value] of Object.entries(validated)) {
-		const serialized = Array.isArray(value) ? value.join(", ") : String(value);
+		const serialized = Array.isArray(value) ? value.join(', ') : String(value);
 		result = result.replaceAll(`{{ ${key} }}`, () => serialized);
 	}
 	return result;

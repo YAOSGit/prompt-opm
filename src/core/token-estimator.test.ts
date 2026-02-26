@@ -1,9 +1,14 @@
 import { describe, expect, it } from 'vitest';
-import { estimateFixedTokens, estimateTemplateTokens } from './token-estimator.js';
+import {
+	estimateFixedTokens,
+	estimateTemplateTokens,
+} from './token-estimator.js';
 
 describe('estimateTemplateTokens', () => {
 	it('returns a positive number for non-empty text', () => {
-		const result = estimateTemplateTokens('Hello world, this is a test prompt.');
+		const result = estimateTemplateTokens(
+			'Hello world, this is a test prompt.',
+		);
 		expect(result).toBeGreaterThan(0);
 		expect(Number.isInteger(result)).toBe(true);
 	});

@@ -1,6 +1,6 @@
-import { z } from "zod";
+import { z } from 'zod';
 
-export const model = "gemini-1.5-pro" as const;
+export const model = 'gemini-1.5-pro' as const;
 
 export const configs = {
 	temperature: 0.5,
@@ -8,10 +8,11 @@ export const configs = {
 } as const;
 
 export const meta = {
-	version: "1.0.1",
-	lastUpdated: "2026-02-26T22:40:37.091Z",
-	sourceFile: "email/welcomeEmail.prompt.md",
-	contentHash: "6bb41dd06f18294928895df4b08623fa7e60215bcab9003315dc865355cc64e0",
+	version: '1.0.2',
+	lastUpdated: '2026-02-26T22:53:24.911Z',
+	sourceFile: 'email/welcomeEmail.prompt.md',
+	contentHash:
+		'4418c517e7894fd46d1321027ecdea93c00febf12b97d62bef51f85485cb79b3',
 	tokenEstimate: 78,
 	inputTokenEstimate: 68,
 } as const;
@@ -19,7 +20,7 @@ export const meta = {
 export const inputSchema = z.object({
 	userName: z.string(),
 	productName: z.string(),
-	tone: z.enum(["formal", "casual", "friendly"]),
+	tone: z.enum(['formal', 'casual', 'friendly']),
 });
 
 export type InputType = z.infer<typeof inputSchema>;
@@ -42,15 +43,16 @@ export const prompt = (inputs: InputType): string => {
 	let result = template;
 
 	// Handle variables with defaults: {{ key | "default" }}
-	const VARIABLE_WITH_DEFAULT_RE = /\{\{\s*([a-zA-Z_]\w*)\s*\|\s*"([^"]*)"\s*\}\}/g;
+	const VARIABLE_WITH_DEFAULT_RE =
+		/\{\{\s*([a-zA-Z_]\w*)\s*\|\s*"([^"]*)"\s*\}\}/g;
 	result = result.replace(VARIABLE_WITH_DEFAULT_RE, (_, key, defaultValue) => {
-		const value = (validated as any)[key];
+		const value = (validated as Record<string, unknown>)[key];
 		if (value === undefined || value === null) return defaultValue;
-		return Array.isArray(value) ? value.join(", ") : String(value);
+		return Array.isArray(value) ? value.join(', ') : String(value);
 	});
 
 	for (const [key, value] of Object.entries(validated)) {
-		const serialized = Array.isArray(value) ? value.join(", ") : String(value);
+		const serialized = Array.isArray(value) ? value.join(', ') : String(value);
 		result = result.replaceAll(`{{ ${key} }}`, () => serialized);
 	}
 	return result;

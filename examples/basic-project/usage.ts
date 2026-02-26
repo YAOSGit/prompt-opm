@@ -6,8 +6,8 @@
  * executed — replace `myLLMClient` with your actual LLM SDK.
  */
 
-import * as bioPrompt from './src/generated/prompts/generateBio.js';
 import * as classifyPrompt from './src/generated/prompts/classify.js';
+import * as bioPrompt from './src/generated/prompts/generateBio.js';
 import * as emailPrompt from './src/generated/prompts/welcomeEmail.js';
 
 // ─── Example 1: Generate a Bio ──────────────────────────────

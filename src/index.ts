@@ -1,5 +1,6 @@
 // Core pipeline
 
+export { analyze } from './core/analyzer.js';
 export type { EmitInput } from './core/emitter.js';
 export { generateBarrelContent, generateFileContent } from './core/emitter.js';
 export type { GenerateResult } from './core/generate.js';
@@ -12,7 +13,6 @@ export {
 } from './core/schema-mapper.js';
 export type { ResolvedPrompt } from './core/snippet-resolver.js';
 export { resolveSnippets } from './core/snippet-resolver.js';
-export { analyze } from './core/analyzer.js';
 export {
 	estimateFixedTokens,
 	estimateTemplateTokens,
@@ -25,6 +25,7 @@ export { loadManifest, saveManifest } from './manifest/manifest.js';
 
 // Types
 export type {
+	AnalyzeResult,
 	Config,
 	DependencyGraph,
 	DependencyNode,
@@ -34,6 +35,5 @@ export type {
 	ManifestEntry,
 	OpmConfig,
 	PromptAnalysis,
-	AnalyzeResult,
 	PromptFile,
 } from './types/index.js';

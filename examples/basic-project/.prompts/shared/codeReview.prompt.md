@@ -1,6 +1,6 @@
 ---
 model: "claude-sonnet-4-20250514"
-version: "1.0.1"
+version: "1.0.2"
 config:
   temperature: 0.3
   maxTokens: 2048

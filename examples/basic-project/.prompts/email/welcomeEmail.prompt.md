@@ -1,6 +1,6 @@
 ---
 model: "gemini-1.5-pro"
-version: "1.0.1"
+version: "1.0.2"
 config:
   temperature: 0.5
   maxTokens: 1024

@@ -56,9 +56,7 @@ describe('runGenerate', () => {
 
 		runGenerate(TEST_DIR);
 
-		expect(console.warn).toHaveBeenCalledWith(
-			expect.stringContaining('WARN:'),
-		);
+		expect(console.warn).toHaveBeenCalledWith(expect.stringContaining('WARN:'));
 	});
 
 	it('logs errors and sets exit code on parse errors', () => {

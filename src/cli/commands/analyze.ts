@@ -21,7 +21,15 @@ export function runAnalyze(cwd: string, options: AnalyzeOptions): void {
 	}
 
 	// Build rows to compute dynamic column widths
-	const headers = ['Prompt', 'Model', 'Ver', 'Tokens', 'Fixed', 'Vars', 'Snippets'];
+	const headers = [
+		'Prompt',
+		'Model',
+		'Ver',
+		'Tokens',
+		'Fixed',
+		'Vars',
+		'Snippets',
+	];
 	const rightAlign = [false, false, false, true, true, true, true];
 	const rows = result.prompts.map((p) => [
 		basename(p.file, '.prompt.md'),
@@ -33,14 +41,16 @@ export function runAnalyze(cwd: string, options: AnalyzeOptions): void {
 		String(p.snippets.length),
 	]);
 
-	const widths = headers.map((h, i) =>
-		Math.max(h.length, ...rows.map((r) => r[i].length)) + 2,
+	const widths = headers.map(
+		(h, i) => Math.max(h.length, ...rows.map((r) => r[i].length)) + 2,
 	);
 
 	const formatRow = (cols: string[]) =>
-		cols.map((col, i) =>
-			rightAlign[i] ? col.padStart(widths[i]) : col.padEnd(widths[i]),
-		).join('');
+		cols
+			.map((col, i) =>
+				rightAlign[i] ? col.padStart(widths[i]) : col.padEnd(widths[i]),
+			)
+			.join('');
 
 	console.log('');
 	console.log(formatRow(headers));
@@ -51,7 +61,9 @@ export function runAnalyze(cwd: string, options: AnalyzeOptions): void {
 	}
 
 	// Dependency graph
-	const hasAnyDeps = Object.values(result.dependencyGraph).some((d) => d.length > 0);
+	const hasAnyDeps = Object.values(result.dependencyGraph).some(
+		(d) => d.length > 0,
+	);
 	if (hasAnyDeps) {
 		console.log('');
 		console.log('Dependency Graph:');
@@ -61,7 +73,8 @@ export function runAnalyze(cwd: string, options: AnalyzeOptions): void {
 				console.log('   (no dependencies)');
 			} else {
 				for (let i = 0; i < deps.length; i++) {
-					const prefix = i === deps.length - 1 ? '\u2514\u2500\u2500' : '\u251C\u2500\u2500';
+					const prefix =
+						i === deps.length - 1 ? '\u2514\u2500\u2500' : '\u251C\u2500\u2500';
 					const depName = basename(deps[i], '.prompt.md');
 					console.log(`   ${prefix} @${depName}`);
 				}
@@ -69,4 +82,3 @@ export function runAnalyze(cwd: string, options: AnalyzeOptions): void {
 		}
 	}
 }
-
