@@ -75,6 +75,13 @@ function convertToJSONSchema(schema: Record<string, SchemaValue>): JsonSchema {
 }
 
 function mapTypeToJsonSchema(type: SchemaValue): JsonSchema {
+	if (Array.isArray(type)) {
+		return {
+			type: 'array',
+			items: type.length > 0 ? mapTypeToJsonSchema(type[0]) : { type: 'object' },
+		};
+	}
+
 	if (typeof type === 'object' && type !== null) {
 		return convertToJSONSchema(type);
 	}

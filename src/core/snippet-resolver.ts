@@ -10,7 +10,7 @@ export type ResolvedPrompt = {
 	resolvedDependencies: string[];
 };
 
-const SNIPPET_RE = /\{\{\s*(@\.?[a-zA-Z_]\w*)\s*\}\}/g;
+const SNIPPET_RE = /\{\{\s*(@\.?[\w/.:-][\w/.:=-]*)\s*\}\}/g;
 
 export function resolveSnippets(
 	file: PromptFile,
@@ -97,11 +97,17 @@ function isEqual(a: SchemaValue, b: SchemaValue): boolean {
 	if (typeof a === 'string' && typeof b === 'string') {
 		return a === b;
 	}
+	if (Array.isArray(a) && Array.isArray(b)) {
+		if (a.length !== b.length) return false;
+		return a.every((item, i) => isEqual(item, b[i]));
+	}
 	if (
 		typeof a === 'object' &&
 		typeof b === 'object' &&
 		a !== null &&
-		b !== null
+		b !== null &&
+		!Array.isArray(a) &&
+		!Array.isArray(b)
 	) {
 		const keysA = Object.keys(a);
 		const keysB = Object.keys(b);

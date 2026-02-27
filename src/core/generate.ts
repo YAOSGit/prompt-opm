@@ -119,7 +119,12 @@ export function generate(config: OpmConfig): GenerateResult {
 					continue;
 				}
 			} catch {
-				// Parse errors will be caught in the main try block below
+				// Full parse failed — check raw YAML for snippet: true
+				// to prevent snippet files from leaking into barrel exports
+				if (/^---\n[\s\S]*?snippet:\s*true[\s\S]*?\n---/.test(rawCheck)) {
+					continue;
+				}
+				// Other parse errors will be caught in the main try block below
 			}
 		}
 

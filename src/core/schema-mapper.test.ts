@@ -35,6 +35,20 @@ describe('mapTypeToZod', () => {
 	it('throws on unknown type', () => {
 		expect(() => mapTypeToZod('object')).toThrow(/unsupported type/i);
 	});
+
+	it('maps array of objects from YAML array syntax', () => {
+		const type = [{ role: 'string', content: 'string' }];
+		const result = mapTypeToZod(type);
+		expect(result).toContain('z.array(');
+		expect(result).toContain('z.object({');
+		expect(result).toContain('role: z.string()');
+		expect(result).toContain('content: z.string()');
+	});
+
+	it('maps empty array', () => {
+		const result = mapTypeToZod([]);
+		expect(result).toBe('z.array(z.unknown())');
+	});
 });
 
 describe('mapSchemaToZodObjectString', () => {
@@ -81,5 +95,15 @@ describe('mapSchemaToZodObjectString', () => {
 		};
 		const result = mapSchemaToZodObjectString(schema);
 		expect(result).toContain('nickname: z.string().optional()');
+	});
+
+	it('handles array of objects from YAML', () => {
+		const schema = {
+			messages: [{ role: 'string', content: 'string' }],
+		};
+		const result = mapSchemaToZodObjectString(schema);
+		expect(result).toContain('messages: z.array(z.object({');
+		expect(result).toContain('role: z.string()');
+		expect(result).toContain('content: z.string()');
 	});
 });

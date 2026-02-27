@@ -4,8 +4,15 @@ const ENUM_RE = /^enum\((.+)\)$/;
 const ARRAY_RE = /^(\w+)\[\]$/;
 
 export function mapTypeToZod(type: SchemaValue): string {
+	if (Array.isArray(type)) {
+		if (type.length === 0) {
+			return 'z.array(z.unknown())';
+		}
+		return `z.array(${mapTypeToZod(type[0])})`;
+	}
+
 	if (typeof type === 'object' && type !== null) {
-		return mapSchemaToZodObjectString(type);
+		return mapSchemaToZodObjectString(type as Record<string, SchemaValue>);
 	}
 
 	const trimmed = String(type).trim();

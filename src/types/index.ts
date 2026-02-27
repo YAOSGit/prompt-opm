@@ -5,7 +5,10 @@ export type Config = {
 	maxTokens?: number;
 } & Record<string, unknown>;
 
-export type SchemaValue = string | { [key: string]: SchemaValue };
+export type SchemaValue =
+	| string
+	| { [key: string]: SchemaValue }
+	| SchemaValue[];
 
 export type FrontMatter = {
 	model: string;

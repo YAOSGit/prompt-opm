@@ -3,7 +3,7 @@ import type { FrontMatter, PromptFile } from '../types/index.js';
 
 const FRONTMATTER_RE = /^---\n([\s\S]*?)\n---\n?([\s\S]*)$/;
 const VARIABLE_RE = /\{\{\s*([a-zA-Z_]\w*)(?:\s*\|\s*"([^"]*)")?\s*\}\}/g;
-const SNIPPET_RE = /\{\{\s*(@\.?[a-zA-Z_]\w*)\s*\}\}/g;
+const SNIPPET_RE = /\{\{\s*(@\.?[\w/.:-][\w/.:=-]*)\s*\}\}/g;
 
 export function parsePromptFile(content: string, filePath: string): PromptFile {
 	const match = content.match(FRONTMATTER_RE);
@@ -14,14 +14,16 @@ export function parsePromptFile(content: string, filePath: string): PromptFile {
 	const [, yamlStr, body] = match;
 	const raw = parseYaml(yamlStr) as Record<string, unknown>;
 
-	if (!raw.model || typeof raw.model !== 'string') {
+	const isSnippet = raw.snippet === true;
+
+	if (!isSnippet && (!raw.model || typeof raw.model !== 'string')) {
 		throw new Error(`[${filePath}] Missing required field: model`);
 	}
 
 	const frontmatter: FrontMatter = {
-		model: raw.model,
+		model: typeof raw.model === 'string' ? raw.model : '',
 		version: typeof raw.version === 'string' ? raw.version : undefined,
-		snippet: raw.snippet === true ? true : undefined,
+		snippet: isSnippet ? true : undefined,
 		config: raw.config as FrontMatter['config'],
 		inputs: raw.inputs as Record<string, string> | undefined,
 		outputs: raw.outputs as Record<string, string> | undefined,

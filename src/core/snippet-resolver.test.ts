@@ -166,4 +166,39 @@ describe('resolveSnippets', () => {
 			/not found.*nonexistent/i,
 		);
 	});
+
+	it('resolves relative snippet with path separator (e.g., @.snippets/context)', () => {
+		const snippetsDir = join(TEST_DIR, 'snippets');
+		mkdirSync(snippetsDir, { recursive: true });
+
+		writeFileSync(
+			join(snippetsDir, 'call-context.prompt.md'),
+			'---\nmodel: test\n---\nCall context content.',
+		);
+
+		const file = makePromptFile({
+			filePath: join(TEST_DIR, 'main.prompt.md'),
+			body: '{{ @.snippets/call-context }}\nMore text.',
+			snippets: ['@.snippets/call-context'],
+		});
+
+		const result = resolveSnippets(file, TEST_DIR);
+		expect(result.body).toContain('Call context content.');
+		expect(result.body).not.toContain('{{ @.snippets/call-context }}');
+	});
+
+	it('resolves snippet with hyphens in name', () => {
+		writeFileSync(
+			join(TEST_DIR, 'my-snippet.prompt.md'),
+			'---\nmodel: test\n---\nHyphenated content.',
+		);
+
+		const file = makePromptFile({
+			body: '{{ @my-snippet }}\nMore text.',
+			snippets: ['@my-snippet'],
+		});
+
+		const result = resolveSnippets(file, TEST_DIR);
+		expect(result.body).toContain('Hyphenated content.');
+	});
 });

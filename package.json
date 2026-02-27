@@ -1,6 +1,6 @@
 {
 	"name": "@yaos-git/prompt-opm",
-	"version": "126.0.0",
+	"version": "126.0.1",
 	"description": "A local-first Object Prompt Mapper and testing framework",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",

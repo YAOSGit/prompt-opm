@@ -129,6 +129,25 @@ describe('parsePromptFile edge cases', () => {
 		expect(() => parsePromptFile(prompt, '/test.prompt.md')).toThrow(/model/i);
 	});
 
+	it('allows missing model when snippet: true', () => {
+		const prompt = '---\nsnippet: true\n---\nSnippet content here.';
+		const result = parsePromptFile(prompt, '/test.prompt.md');
+		expect(result.frontmatter.snippet).toBe(true);
+		expect(result.body).toBe('Snippet content here.');
+	});
+
+	it('extracts path-based snippet references', () => {
+		const prompt = '---\nmodel: test\n---\n{{ @.snippets/call-context }}';
+		const result = parsePromptFile(prompt, '/test.prompt.md');
+		expect(result.snippets).toContain('@.snippets/call-context');
+	});
+
+	it('extracts snippet references with hyphens', () => {
+		const prompt = '---\nmodel: test\n---\n{{ @.my-snippet }}';
+		const result = parsePromptFile(prompt, '/test.prompt.md');
+		expect(result.snippets).toContain('@.my-snippet');
+	});
+
 	it('handles frontmatter with no body', () => {
 		const prompt = '---\nmodel: test\n---\n';
 		const result = parsePromptFile(prompt, '/test.prompt.md');
