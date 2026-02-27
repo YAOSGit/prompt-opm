@@ -1,4 +1,5 @@
 import { watch } from 'chokidar';
+import chalk from 'chalk';
 import { generate } from '../../core/generate.js';
 import { loadConfig } from '../load-config.js';
 
@@ -6,10 +7,10 @@ export function runWatch(cwd: string): void {
 	const config = loadConfig(cwd);
 
 	// Initial generate
-	console.log('Running initial generation...');
+	console.log(chalk.dim('Running initial generation...'));
 	const result = generate(config);
 	console.log(
-		`Generated ${result.generated} file(s), skipped ${result.skipped} unchanged.`,
+		`Generated ${chalk.green(result.generated)} file(s), skipped ${chalk.dim(String(result.skipped))} unchanged.`,
 	);
 
 	let debounceTimer: ReturnType<typeof setTimeout> | null = null;
@@ -25,20 +26,22 @@ export function runWatch(cwd: string): void {
 		if (debounceTimer) clearTimeout(debounceTimer);
 
 		debounceTimer = setTimeout(() => {
-			console.log(`\nFile ${event}: ${path}`);
-			console.log('Regenerating...');
+			console.log(`\nFile ${chalk.cyan(event)}: ${chalk.dim(path)}`);
+			console.log(chalk.dim('Regenerating...'));
 
 			const result = generate(config);
 
 			for (const err of result.errors) {
-				console.error(`ERROR [${err.filePath}]: ${err.message}`);
+				console.error(chalk.red(`ERROR [${err.filePath}]: ${err.message}`));
 			}
 
 			console.log(
-				`Generated ${result.generated} file(s), skipped ${result.skipped} unchanged.`,
+				`Generated ${chalk.green(result.generated)} file(s), skipped ${chalk.dim(String(result.skipped))} unchanged.`,
 			);
 		}, 300);
 	});
 
-	console.log(`\nWatching ${config.source} for changes... (Ctrl+C to stop)`);
+	console.log(
+		`\nWatching ${chalk.cyan(config.source)} for changes... ${chalk.dim('(Ctrl+C to stop)')}`,
+	);
 }

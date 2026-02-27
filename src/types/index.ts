@@ -75,4 +75,5 @@ export type AnalyzeResult = {
 	prompts: PromptAnalysis[];
 	summary: { totalPrompts: number; totalTokens: number };
 	dependencyGraph: Record<string, string[]>;
+	errors: DiagnosticError[];
 };

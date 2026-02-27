@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { basename, relative } from 'node:path';
+import chalk from 'chalk';
 import { parsePromptFile } from '../../core/parser.js';
 import { scanPromptFiles } from '../../core/scanner.js';
 import { resolveSnippets } from '../../core/snippet-resolver.js';
@@ -28,7 +29,7 @@ export function runDiff(cwd: string): void {
 			const prev = manifest.files[relPath];
 
 			if (!prev) {
-				changes.push(`  + ${moduleName}.ts (new)`);
+				changes.push(chalk.green(`  + ${moduleName}.ts (new)`));
 				continue;
 			}
 
@@ -45,11 +46,13 @@ export function runDiff(cwd: string): void {
 			const bump = determineVersionBump(prev, contentHash, inputsHash, false);
 
 			if (bump) {
-				changes.push(`  ~ ${moduleName}.ts (${bump} bump)`);
+				changes.push(chalk.yellow(`  ~ ${moduleName}.ts (${bump} bump)`));
 			}
 		} catch (err) {
 			changes.push(
-				`  ! ${moduleName}.ts (error: ${err instanceof Error ? err.message : String(err)})`,
+				chalk.red(
+					`  ! ${moduleName}.ts (error: ${err instanceof Error ? err.message : String(err)})`,
+				),
 			);
 		}
 	}
@@ -58,14 +61,14 @@ export function runDiff(cwd: string): void {
 	for (const relPath of Object.keys(manifest.files)) {
 		if (!currentFiles.has(relPath)) {
 			const moduleName = basename(relPath, '.prompt.md');
-			changes.push(`  - ${moduleName}.ts (removed)`);
+			changes.push(chalk.red(`  - ${moduleName}.ts (removed)`));
 		}
 	}
 
 	if (changes.length === 0) {
-		console.log('No changes detected.');
+		console.log(chalk.green('No changes detected.'));
 	} else {
-		console.log('Changes:');
+		console.log(chalk.bold('Changes:'));
 		for (const change of changes) {
 			console.log(change);
 		}

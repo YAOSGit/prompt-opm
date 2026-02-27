@@ -194,6 +194,32 @@ describe('generate', () => {
 		expect(entry.inputTokenEstimate).toBeGreaterThan(0);
 	});
 
+	it('handles 50 prompt files correctly', () => {
+		const count = 50;
+		for (let i = 0; i < count; i++) {
+			writeFileSync(
+				join(TEST_SOURCE, `prompt${i}.prompt.md`),
+				`---\nmodel: "test-model"\nversion: "1.0.0"\ninputs:\n  x: string\n---\nPrompt ${i}: {{ x }}`,
+			);
+		}
+
+		const result = generate(config);
+
+		expect(result.generated).toBe(count);
+		expect(result.errors).toHaveLength(0);
+
+		// Barrel file includes all modules
+		const barrel = readFileSync(join(TEST_OUTPUT, 'index.ts'), 'utf-8');
+		for (let i = 0; i < count; i++) {
+			expect(barrel).toContain(`prompt${i}`);
+		}
+
+		// Manifest has entries for all files
+		const manifestPath = join(TEST_OUTPUT, '.prompt-opm.manifest.json');
+		const manifest = JSON.parse(readFileSync(manifestPath, 'utf-8'));
+		expect(Object.keys(manifest.files)).toHaveLength(count);
+	});
+
 	it('collects errors across files but continues', () => {
 		writeFileSync(
 			join(TEST_SOURCE, 'good.prompt.md'),

@@ -19,15 +19,27 @@
 
 ## Table of Contents
 
+### Getting Started
+
 - [Overview](#overview)
 - [Key Features](#key-features)
 - [Quick Start](#quick-start)
+
+### Prompt Files
+
 - [Prompt File Format](#prompt-file-format)
 - [Snippets](#snippets)
+
+### Usage
+
 - [CLI Commands](#cli-commands)
 - [Generated Output](#generated-output)
 - [Versioning](#versioning)
 - [Configuration](#configuration)
+
+### API
+
+- [Library API](#library-api)
 
 ---
 
@@ -238,6 +250,76 @@ The CLI writes the bumped version back into the source `.prompt.md` file, so the
 | `source` | yes | — | Directory containing `.prompt.md` files |
 | `output` | yes | — | Directory for generated `.ts` files |
 | `manifest` | no | same as `output` | Directory for the `.prompt-opm.manifest.json` cache file |
+
+---
+
+## Library API
+
+Use `prompt-opm` programmatically by importing from `@yaos-git/prompt-opm`:
+
+```typescript
+import { generate, parsePromptFile, analyze } from "@yaos-git/prompt-opm";
+```
+
+### Core Pipeline
+
+| Function | Signature | Description |
+|----------|-----------|-------------|
+| `generate` | `(config: OpmConfig) => GenerateResult` | Run the full compilation pipeline |
+| `analyze` | `(config: OpmConfig) => AnalyzeResult` | Analyze prompts without emitting files |
+| `parsePromptFile` | `(content: string, filePath: string) => PromptFile` | Parse a single `.prompt.md` file |
+| `scanPromptFiles` | `(sourceDir: string) => string[]` | Recursively find all `.prompt.md` files |
+| `resolveSnippets` | `(file: PromptFile, sourceRoot: string) => ResolvedPrompt` | Resolve `{{ @snippet }}` references |
+
+### Schema & Emitter
+
+| Function | Signature | Description |
+|----------|-----------|-------------|
+| `mapTypeToZod` | `(type: SchemaValue) => string` | Convert a type string to Zod code |
+| `mapSchemaToZodObjectString` | `(schema: Record<string, SchemaValue>) => string` | Convert a full schema to `z.object(...)` string |
+| `generateFileContent` | `(input: EmitInput) => string` | Generate a TypeScript module string |
+| `generateBarrelContent` | `(moduleNames: string[]) => string` | Generate barrel `index.ts` content |
+
+### Versioning & Hashing
+
+| Function | Signature | Description |
+|----------|-----------|-------------|
+| `bumpVersion` | `(version: string, type: BumpType) => string` | Bump a semver string |
+| `determineVersionBump` | `(prev: ManifestEntry, ...) => BumpType \| null` | Decide if a version bump is needed |
+| `hashContent` | `(content: string) => string` | SHA256 hash of file content |
+| `hashInputsOutputs` | `(inputs?, outputs?) => string` | Deterministic hash of schema fields |
+
+### Manifest
+
+| Function | Signature | Description |
+|----------|-----------|-------------|
+| `loadManifest` | `(dir: string) => ManifestData` | Load `.prompt-opm.manifest.json` |
+| `saveManifest` | `(dir: string, data: ManifestData) => void` | Save manifest to disk |
+
+### Types
+
+All types are exported for library consumers:
+
+```typescript
+import type {
+  OpmConfig,
+  PromptFile,
+  FrontMatter,
+  Config,
+  SchemaValue,
+  ManifestEntry,
+  ManifestData,
+  DiagnosticError,
+  PromptAnalysis,
+  AnalyzeResult,
+  GenerateResult,
+  ResolvedPrompt,
+  EmitInput,
+  BumpType,
+  DependencyGraph,
+  DependencyNode,
+} from "@yaos-git/prompt-opm";
+```
 
 ---
 

@@ -25,6 +25,8 @@ describe('determineVersionBump', () => {
 			inputsHash: 'abc',
 			outputsHash: 'def',
 			dependencies: [],
+			tokenEstimate: 0,
+			inputTokenEstimate: 0,
 		};
 		const result = determineVersionBump(prev, 'same', 'abc', false);
 		expect(result).toBeNull();
@@ -37,6 +39,8 @@ describe('determineVersionBump', () => {
 			inputsHash: 'abc',
 			outputsHash: 'def',
 			dependencies: [],
+			tokenEstimate: 0,
+			inputTokenEstimate: 0,
 		};
 		const result = determineVersionBump(prev, 'new', 'abc', false);
 		expect(result).toBe('patch');
@@ -49,6 +53,8 @@ describe('determineVersionBump', () => {
 			inputsHash: 'old-inputs',
 			outputsHash: 'def',
 			dependencies: [],
+			tokenEstimate: 0,
+			inputTokenEstimate: 0,
 		};
 		const result = determineVersionBump(prev, 'new', 'new-inputs', false);
 		expect(result).toBe('minor');
@@ -61,6 +67,8 @@ describe('determineVersionBump', () => {
 			inputsHash: 'abc',
 			outputsHash: 'def',
 			dependencies: ['dep.prompt.md'],
+			tokenEstimate: 0,
+			inputTokenEstimate: 0,
 		};
 		const result = determineVersionBump(prev, 'same', 'abc', true);
 		expect(result).toBe('patch');

@@ -5,16 +5,15 @@ export default defineConfig({
 		projects: [
 			'./vitest.unit.config.ts',
 			'./vitest.type.config.ts',
-			'./vitest.react.config.ts',
 			'./vitest.e2e.config.ts',
 		],
 		coverage: {
-			include: ['src/**/*.{ts,tsx}'],
+			include: ['src/**/*.ts'],
 			exclude: [
 				'e2e/**',
-				'src/app/**',
+				'src/cli/**',
 				'node_modules/**',
-				'**/*.test.{ts,tsx}',
+				'**/*.test.ts',
 				'**/*.test-d.ts',
 			],
 		},

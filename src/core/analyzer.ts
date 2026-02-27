@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { basename, relative } from 'node:path';
 import type {
 	AnalyzeResult,
+	DiagnosticError,
 	OpmConfig,
 	PromptAnalysis,
 } from '../types/index.js';
@@ -18,6 +19,7 @@ export function analyze(config: OpmConfig): AnalyzeResult {
 	const filePaths = scanPromptFiles(source);
 	const prompts: PromptAnalysis[] = [];
 	const dependencyGraph: Record<string, string[]> = {};
+	const errors: DiagnosticError[] = [];
 
 	for (const filePath of filePaths) {
 		try {
@@ -49,7 +51,20 @@ export function analyze(config: OpmConfig): AnalyzeResult {
 			});
 
 			dependencyGraph[moduleName] = dependencies;
-		} catch {}
+		} catch (err) {
+			const message = err instanceof Error ? err.message : String(err);
+			let errorType: DiagnosticError['type'] = 'parse';
+			if (message.includes('Circular dependency')) {
+				errorType = 'circular';
+			} else if (message.includes('Snippet')) {
+				errorType = 'snippet';
+			} else if (message.includes('Conflict')) {
+				errorType = 'conflict';
+			} else if (message.includes('Unsupported type')) {
+				errorType = 'schema';
+			}
+			errors.push({ filePath, message, type: errorType });
+		}
 	}
 
 	const totalTokens = prompts.reduce((sum, p) => sum + p.tokenEstimate, 0);
@@ -61,5 +76,6 @@ export function analyze(config: OpmConfig): AnalyzeResult {
 			totalTokens,
 		},
 		dependencyGraph,
+		errors,
 	};
 }

@@ -96,3 +96,49 @@ describe('parsePromptFile', () => {
 		expect(result.frontmatter.version).toBeUndefined();
 	});
 });
+
+describe('parsePromptFile edge cases', () => {
+	it('throws on completely empty file', () => {
+		expect(() => parsePromptFile('', '/test.prompt.md')).toThrow(
+			/frontmatter/i,
+		);
+	});
+
+	it('throws on file with no frontmatter delimiters', () => {
+		expect(() => parsePromptFile('just plain text', '/test.prompt.md')).toThrow(
+			/frontmatter/i,
+		);
+	});
+
+	it('throws on single delimiter only', () => {
+		expect(() =>
+			parsePromptFile(
+				'---\nmodel: test\nno closing delimiter',
+				'/test.prompt.md',
+			),
+		).toThrow(/frontmatter/i);
+	});
+
+	it('throws when model is a number instead of string', () => {
+		const prompt = '---\nmodel: 123\n---\nHello';
+		expect(() => parsePromptFile(prompt, '/test.prompt.md')).toThrow(/model/i);
+	});
+
+	it('throws when model is missing entirely', () => {
+		const prompt = '---\nversion: "1.0.0"\n---\nHello';
+		expect(() => parsePromptFile(prompt, '/test.prompt.md')).toThrow(/model/i);
+	});
+
+	it('handles frontmatter with no body', () => {
+		const prompt = '---\nmodel: test\n---\n';
+		const result = parsePromptFile(prompt, '/test.prompt.md');
+		expect(result.body).toBe('');
+		expect(result.variables).toEqual([]);
+	});
+
+	it('handles body with only whitespace', () => {
+		const prompt = '---\nmodel: test\n---\n   \n  \n';
+		const result = parsePromptFile(prompt, '/test.prompt.md');
+		expect(result.body).toBe('');
+	});
+});

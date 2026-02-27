@@ -113,3 +113,154 @@ describe('generateBarrelContent', () => {
 		expect(result).toBe('');
 	});
 });
+
+describe('generateFileContent snapshots', () => {
+	it('matches snapshot for full module with inputs/outputs', () => {
+		const result = generateFileContent({
+			model: 'gemini-1.5-pro',
+			configs: { temperature: 0.7 },
+			meta: {
+				version: '1.0.0',
+				lastUpdated: '2026-01-01T00:00:00Z',
+				sourceFile: 'test.prompt.md',
+				contentHash: 'abc123',
+				tokenEstimate: 42,
+				inputTokenEstimate: 30,
+			},
+			inputs: { name: 'string', tags: 'string[]' },
+			outputs: { bio: 'string' },
+			template: 'Hello {{ name }}, tags: {{ tags }}',
+		});
+
+		expect(result).toMatchInlineSnapshot(`
+			"import { z } from "zod";
+
+			export const model = "gemini-1.5-pro" as const;
+
+			export const configs = {
+				temperature: 0.7,
+			} as const;
+
+			export const meta = {
+				version: "1.0.0",
+				lastUpdated: "2026-01-01T00:00:00Z",
+				sourceFile: "test.prompt.md",
+				contentHash: "abc123",
+				tokenEstimate: 42,
+				inputTokenEstimate: 30,
+			} as const;
+
+			export const inputSchema = z.object({
+				name: z.string(),
+				tags: z.array(z.string()),
+			});
+
+			export type InputType = z.infer<typeof inputSchema>;
+
+			export const outputSchema = z.object({
+				bio: z.string(),
+			});
+
+			export type OutputType = z.infer<typeof outputSchema>;
+
+			export const template = \`Hello {{ name }}, tags: {{ tags }}\`;
+
+			export const prompt = (inputs: InputType): string => {
+				const validated = inputSchema.parse(inputs);
+				let result = template;
+
+				// Handle variables with defaults: {{ key | "default" }}
+				const VARIABLE_WITH_DEFAULT_RE = /\\{\\{\\s*([a-zA-Z_]\\w*)\\s*\\|\\s*"([^"]*)"\\s*\\}\\}/g;
+				result = result.replace(VARIABLE_WITH_DEFAULT_RE, (_, key, defaultValue) => {
+					const value = (validated as Record<string, unknown>)[key];
+					if (value === undefined || value === null) return defaultValue;
+					return Array.isArray(value) ? value.join(", ") : String(value);
+				});
+
+				for (const [key, value] of Object.entries(validated)) {
+					const serialized = Array.isArray(value) ? value.join(", ") : String(value);
+					result = result.replaceAll(\`{{ \${key} }}\`, () => serialized);
+				}
+				return result;
+			};
+			"
+		`);
+	});
+
+	it('matches snapshot for minimal module', () => {
+		const result = generateFileContent({
+			model: 'test',
+			configs: {},
+			meta: {
+				version: '0.1.0',
+				lastUpdated: '',
+				sourceFile: 'minimal.prompt.md',
+				contentHash: 'xyz',
+				tokenEstimate: 0,
+				inputTokenEstimate: 0,
+			},
+			inputs: {},
+			outputs: {},
+			template: 'Simple prompt.',
+		});
+
+		expect(result).toMatchInlineSnapshot(`
+			"import { z } from "zod";
+
+			export const model = "test" as const;
+
+			export const configs = {} as const;
+
+			export const meta = {
+				version: "0.1.0",
+				lastUpdated: "",
+				sourceFile: "minimal.prompt.md",
+				contentHash: "xyz",
+				tokenEstimate: 0,
+				inputTokenEstimate: 0,
+			} as const;
+
+			export const inputSchema = z.object({});
+
+			export type InputType = z.infer<typeof inputSchema>;
+
+			export const outputSchema = z.object({});
+
+			export type OutputType = z.infer<typeof outputSchema>;
+
+			export const template = \`Simple prompt.\`;
+
+			export const prompt = (inputs: InputType): string => {
+				const validated = inputSchema.parse(inputs);
+				let result = template;
+
+				// Handle variables with defaults: {{ key | "default" }}
+				const VARIABLE_WITH_DEFAULT_RE = /\\{\\{\\s*([a-zA-Z_]\\w*)\\s*\\|\\s*"([^"]*)"\\s*\\}\\}/g;
+				result = result.replace(VARIABLE_WITH_DEFAULT_RE, (_, key, defaultValue) => {
+					const value = (validated as Record<string, unknown>)[key];
+					if (value === undefined || value === null) return defaultValue;
+					return Array.isArray(value) ? value.join(", ") : String(value);
+				});
+
+				for (const [key, value] of Object.entries(validated)) {
+					const serialized = Array.isArray(value) ? value.join(", ") : String(value);
+					result = result.replaceAll(\`{{ \${key} }}\`, () => serialized);
+				}
+				return result;
+			};
+			"
+		`);
+	});
+});
+
+describe('generateBarrelContent snapshots', () => {
+	it('matches snapshot for multiple modules', () => {
+		const result = generateBarrelContent(['auth', 'greeting', 'summary']);
+		expect(result).toMatchInlineSnapshot(`
+			"export * as auth from "./auth.js";
+			export * as greeting from "./greeting.js";
+			export * as summary from "./summary.js";
+			"
+		`);
+	});
+});

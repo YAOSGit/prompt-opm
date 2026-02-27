@@ -81,7 +81,7 @@ describe('runAnalyze', () => {
 		});
 		expect(jsonCall).toBeDefined();
 
-		const parsed = JSON.parse(jsonCall[0]);
+		const parsed = JSON.parse(jsonCall?.[0]);
 		expect(parsed.prompts).toHaveLength(1);
 		expect(parsed.summary.totalPrompts).toBe(1);
 		expect(parsed.dependencyGraph).toBeDefined();

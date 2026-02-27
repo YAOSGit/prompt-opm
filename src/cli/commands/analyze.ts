@@ -1,4 +1,5 @@
 import { basename } from 'node:path';
+import chalk from 'chalk';
 import { analyze } from '../../core/analyzer.js';
 import { loadConfig } from '../load-config.js';
 
@@ -45,16 +46,19 @@ export function runAnalyze(cwd: string, options: AnalyzeOptions): void {
 		(h, i) => Math.max(h.length, ...rows.map((r) => r[i].length)) + 2,
 	);
 
-	const formatRow = (cols: string[]) =>
+	const formatRow = (cols: string[], bold = false) =>
 		cols
-			.map((col, i) =>
-				rightAlign[i] ? col.padStart(widths[i]) : col.padEnd(widths[i]),
-			)
+			.map((col, i) => {
+				const padded = rightAlign[i]
+					? col.padStart(widths[i])
+					: col.padEnd(widths[i]);
+				return bold ? chalk.bold(padded) : padded;
+			})
 			.join('');
 
 	console.log('');
-	console.log(formatRow(headers));
-	console.log('-'.repeat(widths.reduce((a, b) => a + b, 0)));
+	console.log(formatRow(headers, true));
+	console.log(chalk.dim('-'.repeat(widths.reduce((a, b) => a + b, 0))));
 
 	for (const row of rows) {
 		console.log(formatRow(row));
@@ -66,17 +70,17 @@ export function runAnalyze(cwd: string, options: AnalyzeOptions): void {
 	);
 	if (hasAnyDeps) {
 		console.log('');
-		console.log('Dependency Graph:');
+		console.log(chalk.bold('Dependency Graph:'));
 		for (const [name, deps] of Object.entries(result.dependencyGraph)) {
-			console.log(` ${name}`);
+			console.log(` ${chalk.cyan(name)}`);
 			if (deps.length === 0) {
-				console.log('   (no dependencies)');
+				console.log(chalk.dim('   (no dependencies)'));
 			} else {
 				for (let i = 0; i < deps.length; i++) {
 					const prefix =
 						i === deps.length - 1 ? '\u2514\u2500\u2500' : '\u251C\u2500\u2500';
 					const depName = basename(deps[i], '.prompt.md');
-					console.log(`   ${prefix} @${depName}`);
+					console.log(`   ${chalk.dim(prefix)} ${chalk.cyan(`@${depName}`)}`);
 				}
 			}
 		}

@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import { Command } from 'commander';
 import { runDiff } from './commands/diff.js';
 import { runGenerate } from './commands/generate.js';
 import { runInit } from './commands/init.js';
@@ -8,77 +9,57 @@ import { runWatch } from './commands/watch.js';
 
 declare const __CLI_VERSION__: string;
 
-const args = process.argv.slice(2);
-const command = args[0];
+const program = new Command();
 const cwd = process.cwd();
 
-switch (command) {
-	case 'init':
-		runInit(cwd);
-		break;
+program
+	.name('prompt-opm')
+	.description(
+		'A local-first Object Prompt Mapper for type-safe LLM prompts',
+	)
+	.version(__CLI_VERSION__);
 
-	case 'generate':
-		runGenerate(cwd);
-		break;
+program
+	.command('init')
+	.description('Scaffold .prompts/ directory and config file')
+	.action(() => runInit(cwd));
 
-	case 'watch':
-		runWatch(cwd);
-		break;
+program
+	.command('generate')
+	.description('Compile .prompt.md files to TypeScript')
+	.action(() => runGenerate(cwd));
 
-	case 'validate':
-		runValidate(cwd);
-		break;
+program
+	.command('watch')
+	.description('Watch for changes and regenerate')
+	.action(() => runWatch(cwd));
 
-	case 'diff':
-		runDiff(cwd);
-		break;
+program
+	.command('validate')
+	.description('Check for errors without emitting files')
+	.action(() => runValidate(cwd));
 
-	case 'analyze': {
-		const jsonFlag = args.includes('--json');
-		import('./commands/analyze.js').then(({ runAnalyze }) => {
-			runAnalyze(cwd, { json: jsonFlag });
-		});
-		break;
-	}
+program
+	.command('diff')
+	.description('Preview what would change')
+	.action(() => runDiff(cwd));
 
-	case 'schema': {
-		const formatIdx = args.indexOf('--format');
-		const format = formatIdx !== -1 ? args[formatIdx + 1] : 'jsonschema';
-		import('./commands/schema.js').then(({ runSchema }) => {
-			runSchema(cwd, { format });
-		});
-		break;
-	}
+program
+	.command('analyze')
+	.description('Show prompt metrics and dependency graph')
+	.option('--json', 'Output results as JSON')
+	.action(async (options) => {
+		const { runAnalyze } = await import('./commands/analyze.js');
+		runAnalyze(cwd, { json: options.json ?? false });
+	});
 
-	case '--version':
-	case '-v':
-		console.log(__CLI_VERSION__);
-		break;
+program
+	.command('schema')
+	.description('Export prompt schemas')
+	.option('--format <format>', 'Output format', 'jsonschema')
+	.action(async (options) => {
+		const { runSchema } = await import('./commands/schema.js');
+		runSchema(cwd, { format: options.format });
+	});
 
-	case '--help':
-	case '-h':
-	case undefined:
-		console.log(`prompt-opm v${__CLI_VERSION__}
-
-Usage: prompt-opm <command>
-
-Commands:
-  init        Scaffold .prompts/ directory and config file
-  generate    Compile .prompt.md files to TypeScript
-  watch       Watch for changes and regenerate
-  validate    Check for errors without emitting files
-  diff        Preview what would change
-  analyze     Show prompt metrics and dependency graph
-  schema      Export prompt schemas (JSON Schema)
-
-Options:
-  -v, --version  Show version
-  -h, --help     Show help`);
-		break;
-
-	default:
-		console.error(
-			`Unknown command: ${command}\nRun "prompt-opm --help" for usage.`,
-		);
-		process.exitCode = 1;
-}
+program.parse();

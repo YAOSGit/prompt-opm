@@ -18,5 +18,11 @@ export default defineConfig({
 		sequence: {
 			groupOrder: 1,
 		},
+		coverage: {
+			provider: 'v8',
+			reporter: ['text', 'lcov'],
+			include: ['src/**/*.ts'],
+			exclude: ['src/**/*.test.ts', 'src/**/*.test-d.ts'],
+		},
 	},
 });

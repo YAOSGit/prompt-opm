@@ -1,4 +1,5 @@
 import { readFileSync } from 'node:fs';
+import chalk from 'chalk';
 import { parsePromptFile } from '../../core/parser.js';
 import { scanPromptFiles } from '../../core/scanner.js';
 import { resolveSnippets } from '../../core/snippet-resolver.js';
@@ -37,7 +38,7 @@ export function runSchema(cwd: string, options: { format: string }): void {
 				};
 			}
 		} catch (err) {
-			console.error(`Error processing ${filePath}:`, err);
+			console.error(chalk.red(`Error processing ${filePath}:`), err);
 		}
 	}
 
@@ -45,7 +46,7 @@ export function runSchema(cwd: string, options: { format: string }): void {
 	if (options.format === 'jsonschema') {
 		console.log(output);
 	} else {
-		console.error(`Unsupported format: ${options.format}`);
+		console.error(chalk.red(`Unsupported format: ${options.format}`));
 		process.exit(1);
 	}
 }

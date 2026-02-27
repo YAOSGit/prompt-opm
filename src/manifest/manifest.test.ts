@@ -33,6 +33,8 @@ describe('loadManifest', () => {
 					inputsHash: 'def',
 					outputsHash: 'ghi',
 					dependencies: [],
+					tokenEstimate: 0,
+					inputTokenEstimate: 0,
 				},
 			},
 		};
@@ -64,6 +66,8 @@ describe('saveManifest', () => {
 					inputsHash: 'y',
 					outputsHash: 'z',
 					dependencies: ['b.prompt.md'],
+					tokenEstimate: 0,
+					inputTokenEstimate: 0,
 				},
 			},
 		};

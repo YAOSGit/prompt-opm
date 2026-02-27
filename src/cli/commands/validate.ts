@@ -1,4 +1,5 @@
 import { readFileSync } from 'node:fs';
+import chalk from 'chalk';
 import { parsePromptFile } from '../../core/parser.js';
 import { scanPromptFiles } from '../../core/scanner.js';
 import { resolveSnippets } from '../../core/snippet-resolver.js';
@@ -61,18 +62,20 @@ export function runValidate(cwd: string): void {
 	}
 
 	for (const warn of warnings) {
-		console.warn(`WARN: ${warn}`);
+		console.warn(chalk.yellow(`WARN: ${warn}`));
 	}
 
 	for (const err of errors) {
-		console.error(`ERROR [${err.filePath}]: ${err.message}`);
+		console.error(chalk.red(`ERROR [${err.filePath}]: ${err.message}`));
 	}
 
 	if (errors.length === 0) {
-		console.log(`Validated ${files.length} file(s) — no errors.`);
+		console.log(
+			chalk.green(`Validated ${files.length} file(s) — no errors.`),
+		);
 	} else {
 		console.error(
-			`Found ${errors.length} error(s) in ${files.length} file(s).`,
+			chalk.red(`Found ${errors.length} error(s) in ${files.length} file(s).`),
 		);
 		process.exitCode = 1;
 	}
