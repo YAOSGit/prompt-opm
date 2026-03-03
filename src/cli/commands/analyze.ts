@@ -1,6 +1,6 @@
 import { basename } from 'node:path';
 import chalk from 'chalk';
-import { analyze } from '../../core/analyzer.js';
+import { analyze } from '../../core/Analyzer/index.js';
 import { loadConfig } from '../load-config.js';
 
 type AnalyzeOptions = {

@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import { generate } from '../../core/generate.js';
+import { generate } from '../../core/Generate/index.js';
 import { loadConfig } from '../load-config.js';
 
 export function runGenerate(cwd: string): void {

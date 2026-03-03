@@ -1,7 +1,7 @@
 import { existsSync, mkdirSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import type { ManifestData } from '../types/index.js';
+import type { ManifestData } from '../types/Manifest/index.js';
 import { loadManifest, saveManifest } from './manifest.js';
 
 const TEST_DIR = join(import.meta.dirname, '../../.test-manifest');

@@ -1,9 +1,9 @@
 import { readFileSync } from 'node:fs';
 import chalk from 'chalk';
-import { parsePromptFile } from '../../core/parser.js';
-import { scanPromptFiles } from '../../core/scanner.js';
-import { resolveSnippets } from '../../core/snippet-resolver.js';
-import type { SchemaValue } from '../../types/index.js';
+import { parsePromptFile } from '../../core/Parser/index.js';
+import { scanPromptFiles } from '../../core/Scanner/index.js';
+import { resolveSnippets } from '../../core/SnippetResolver/index.js';
+import type { SchemaValue } from '../../types/FrontMatter/index.js';
 import { loadConfig } from '../load-config.js';
 
 type JsonSchema = {
@@ -47,7 +47,8 @@ export function runSchema(cwd: string, options: { format: string }): void {
 		console.log(output);
 	} else {
 		console.error(chalk.red(`Unsupported format: ${options.format}`));
-		process.exit(1);
+		process.exitCode = 1;
+		return;
 	}
 }
 
@@ -78,7 +79,8 @@ function mapTypeToJsonSchema(type: SchemaValue): JsonSchema {
 	if (Array.isArray(type)) {
 		return {
 			type: 'array',
-			items: type.length > 0 ? mapTypeToJsonSchema(type[0]) : { type: 'object' },
+			items:
+				type.length > 0 ? mapTypeToJsonSchema(type[0]) : { type: 'object' },
 		};
 	}
 

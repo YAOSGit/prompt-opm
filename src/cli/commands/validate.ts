@@ -1,9 +1,9 @@
 import { readFileSync } from 'node:fs';
 import chalk from 'chalk';
-import { parsePromptFile } from '../../core/parser.js';
-import { scanPromptFiles } from '../../core/scanner.js';
-import { resolveSnippets } from '../../core/snippet-resolver.js';
-import type { DiagnosticError } from '../../types/index.js';
+import { parsePromptFile } from '../../core/Parser/index.js';
+import { scanPromptFiles } from '../../core/Scanner/index.js';
+import { resolveSnippets } from '../../core/SnippetResolver/index.js';
+import type { DiagnosticError } from '../../types/Diagnostics/index.js';
 import { loadConfig } from '../load-config.js';
 
 export function runValidate(cwd: string): void {
@@ -70,9 +70,7 @@ export function runValidate(cwd: string): void {
 	}
 
 	if (errors.length === 0) {
-		console.log(
-			chalk.green(`Validated ${files.length} file(s) — no errors.`),
-		);
+		console.log(chalk.green(`Validated ${files.length} file(s) — no errors.`));
 	} else {
 		console.error(
 			chalk.red(`Found ${errors.length} error(s) in ${files.length} file(s).`),

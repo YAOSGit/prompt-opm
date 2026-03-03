@@ -14,9 +14,7 @@ const cwd = process.cwd();
 
 program
 	.name('prompt-opm')
-	.description(
-		'A local-first Object Prompt Mapper for type-safe LLM prompts',
-	)
+	.description('A local-first Object Prompt Mapper for type-safe LLM prompts')
 	.version(__CLI_VERSION__);
 
 program

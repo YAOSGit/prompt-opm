@@ -1,6 +1,6 @@
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import type { ManifestData } from '../types/index.js';
+import type { ManifestData } from '../types/Manifest/index.js';
 
 const MANIFEST_FILENAME = '.prompt-opm.manifest.json';
 

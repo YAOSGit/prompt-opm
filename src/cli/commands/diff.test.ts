@@ -1,7 +1,7 @@
 import { existsSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { generate } from '../../core/generate.js';
+import { generate } from '../../core/Generate/index.js';
 import { runDiff } from './diff.js';
 
 const TEST_DIR = join(import.meta.dirname, '../../../.test-diff-cmd');

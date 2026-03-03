@@ -1,10 +1,10 @@
 import { readFileSync } from 'node:fs';
 import { basename, relative } from 'node:path';
 import chalk from 'chalk';
-import { parsePromptFile } from '../../core/parser.js';
-import { scanPromptFiles } from '../../core/scanner.js';
-import { resolveSnippets } from '../../core/snippet-resolver.js';
-import { determineVersionBump } from '../../core/version-manager.js';
+import { parsePromptFile } from '../../core/Parser/index.js';
+import { scanPromptFiles } from '../../core/Scanner/index.js';
+import { resolveSnippets } from '../../core/SnippetResolver/index.js';
+import { determineVersionBump } from '../../core/VersionManager/index.js';
 import { hashContent, hashInputsOutputs } from '../../manifest/hasher.js';
 import { loadManifest } from '../../manifest/manifest.js';
 import { loadConfig } from '../load-config.js';

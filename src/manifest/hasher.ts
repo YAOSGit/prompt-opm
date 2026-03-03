@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import type { SchemaValue } from '../types/index.js';
+import type { SchemaValue } from '../types/FrontMatter/index.js';
 
 export function hashContent(content: string): string {
 	return createHash('sha256').update(content).digest('hex');

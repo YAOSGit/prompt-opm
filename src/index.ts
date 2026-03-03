@@ -1,24 +1,30 @@
 // Core pipeline
 
-export { analyze } from './core/analyzer.js';
-export type { EmitInput } from './core/emitter.js';
-export { generateBarrelContent, generateFileContent } from './core/emitter.js';
-export type { GenerateResult } from './core/generate.js';
-export { generate } from './core/generate.js';
-export { parsePromptFile } from './core/parser.js';
-export { scanPromptFiles } from './core/scanner.js';
+export { analyze } from './core/Analyzer/index.js';
+export type { EmitInput } from './core/Emitter/index.js';
+export {
+	generateBarrelContent,
+	generateFileContent,
+} from './core/Emitter/index.js';
+export type { GenerateResult } from './core/Generate/index.js';
+export { generate } from './core/Generate/index.js';
+export { parsePromptFile } from './core/Parser/index.js';
+export { scanPromptFiles } from './core/Scanner/index.js';
 export {
 	mapSchemaToZodObjectString,
 	mapTypeToZod,
-} from './core/schema-mapper.js';
-export type { ResolvedPrompt } from './core/snippet-resolver.js';
-export { resolveSnippets } from './core/snippet-resolver.js';
+} from './core/SchemaMapper/index.js';
+export type { ResolvedPrompt } from './core/SnippetResolver/index.js';
+export { resolveSnippets } from './core/SnippetResolver/index.js';
 export {
 	estimateFixedTokens,
 	estimateTemplateTokens,
-} from './core/token-estimator.js';
-export type { BumpType } from './core/version-manager.js';
-export { bumpVersion, determineVersionBump } from './core/version-manager.js';
+} from './core/TokenEstimator/index.js';
+export type { BumpType } from './core/VersionManager/index.js';
+export {
+	bumpVersion,
+	determineVersionBump,
+} from './core/VersionManager/index.js';
 export { hashContent, hashInputsOutputs } from './manifest/hasher.js';
 // Manifest
 export { loadManifest, saveManifest } from './manifest/manifest.js';

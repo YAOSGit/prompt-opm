@@ -17,7 +17,7 @@ vi.mock('chokidar', () => ({
 	watch: vi.fn(() => mockWatcher),
 }));
 
-vi.mock('../../core/generate.js', () => ({
+vi.mock('../../core/Generate/index.js', () => ({
 	generate: vi.fn(() => ({
 		generated: 1,
 		skipped: 0,
@@ -27,7 +27,7 @@ vi.mock('../../core/generate.js', () => ({
 }));
 
 import { watch } from 'chokidar';
-import { generate } from '../../core/generate.js';
+import { generate } from '../../core/Generate/index.js';
 import { runWatch } from './watch.js';
 
 beforeEach(() => {

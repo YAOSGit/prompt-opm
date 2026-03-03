@@ -1,0 +1,23 @@
+export interface DiagnosticError {
+	filePath: string;
+	message: string;
+	type: 'parse' | 'snippet' | 'schema' | 'conflict' | 'circular';
+}
+
+export interface PromptAnalysis {
+	file: string;
+	model: string;
+	version: string;
+	tokenEstimate: number;
+	inputTokenEstimate: number;
+	variables: string[];
+	snippets: string[];
+	dependencies: string[];
+}
+
+export interface AnalyzeResult {
+	prompts: PromptAnalysis[];
+	summary: { totalPrompts: number; totalTokens: number };
+	dependencyGraph: Record<string, string[]>;
+	errors: DiagnosticError[];
+}

@@ -1,6 +1,6 @@
-import { watch } from 'chokidar';
 import chalk from 'chalk';
-import { generate } from '../../core/generate.js';
+import { watch } from 'chokidar';
+import { generate } from '../../core/Generate/index.js';
 import { loadConfig } from '../load-config.js';
 
 export function runWatch(cwd: string): void {
