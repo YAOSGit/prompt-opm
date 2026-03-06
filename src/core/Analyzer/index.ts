@@ -7,6 +7,7 @@ import type {
 	PromptAnalysis,
 } from '../../types/index.js';
 import { parsePromptFile } from '../Parser/index.js';
+import { classifyDiagnosticError } from '../patterns.js';
 import { scanPromptFiles } from '../Scanner/index.js';
 import { resolveSnippets } from '../SnippetResolver/index.js';
 import {
@@ -53,17 +54,11 @@ export function analyze(config: OpmConfig): AnalyzeResult {
 			dependencyGraph[moduleName] = dependencies;
 		} catch (err) {
 			const message = err instanceof Error ? err.message : String(err);
-			let errorType: DiagnosticError['type'] = 'parse';
-			if (message.includes('Circular dependency')) {
-				errorType = 'circular';
-			} else if (message.includes('Snippet')) {
-				errorType = 'snippet';
-			} else if (message.includes('Conflict')) {
-				errorType = 'conflict';
-			} else if (message.includes('Unsupported type')) {
-				errorType = 'schema';
-			}
-			errors.push({ filePath, message, type: errorType });
+			errors.push({
+				filePath,
+				message,
+				type: classifyDiagnosticError(message),
+			});
 		}
 	}
 

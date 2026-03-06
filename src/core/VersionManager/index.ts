@@ -1,6 +1,6 @@
-import type { ManifestEntry } from '../../types/Manifest/index.js';
+import type { BumpType, ManifestEntry } from '../../types/index.js';
 
-export type BumpType = 'patch' | 'minor';
+export type { BumpType } from '../../types/index.js';
 
 export function bumpVersion(version: string, type: BumpType): string {
 	const parts = version.split('.').map(Number);

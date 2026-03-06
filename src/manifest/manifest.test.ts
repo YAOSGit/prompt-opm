@@ -1,10 +1,14 @@
 import { existsSync, mkdirSync, rmSync } from 'node:fs';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import type { ManifestData } from '../types/Manifest/index.js';
+import type { ManifestData } from '../types/index.js';
 import { loadManifest, saveManifest } from './manifest.js';
 
-const TEST_DIR = join(import.meta.dirname, '../../.test-manifest');
+const TEST_DIR = join(
+	dirname(fileURLToPath(import.meta.url)),
+	'../../.test-manifest',
+);
 
 beforeEach(() => {
 	mkdirSync(TEST_DIR, { recursive: true });

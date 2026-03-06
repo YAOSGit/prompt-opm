@@ -1,10 +1,14 @@
 import { existsSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import type { OpmConfig } from '../../types/index.js';
 import { analyze } from './index.js';
 
-const TEST_SOURCE = join(import.meta.dirname, '../../../.test-analyzer-source');
+const TEST_SOURCE = join(
+	dirname(fileURLToPath(import.meta.url)),
+	'../../../.test-analyzer-source',
+);
 const config: OpmConfig = { source: TEST_SOURCE, output: '' };
 
 beforeEach(() => {

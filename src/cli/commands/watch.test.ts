@@ -1,8 +1,12 @@
 import { existsSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-const TEST_DIR = join(import.meta.dirname, '../../../.test-watch-cmd');
+const TEST_DIR = join(
+	dirname(fileURLToPath(import.meta.url)),
+	'../../../.test-watch-cmd',
+);
 
 const mockWatcherCallbacks: Record<string, (...args: unknown[]) => void> = {};
 const mockWatcher = {

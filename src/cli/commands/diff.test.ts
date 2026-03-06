@@ -1,10 +1,14 @@
 import { existsSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { generate } from '../../core/Generate/index.js';
 import { runDiff } from './diff.js';
 
-const TEST_DIR = join(import.meta.dirname, '../../../.test-diff-cmd');
+const TEST_DIR = join(
+	dirname(fileURLToPath(import.meta.url)),
+	'../../../.test-diff-cmd',
+);
 
 beforeEach(() => {
 	mkdirSync(TEST_DIR, { recursive: true });

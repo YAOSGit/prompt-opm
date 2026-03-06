@@ -1,6 +1,5 @@
 import { estimateTokenCount } from 'tokenx';
-
-const VARIABLE_RE = /\{\{\s*[a-zA-Z_]\w*(?:\s*\|\s*"[^"]*")?\s*\}\}/g;
+import { VARIABLE_RE_SIMPLE } from '../patterns.js';
 
 export function estimateTemplateTokens(text: string): number {
 	if (!text) return 0;
@@ -9,6 +8,6 @@ export function estimateTemplateTokens(text: string): number {
 
 export function estimateFixedTokens(template: string): number {
 	if (!template) return 0;
-	const stripped = template.replace(VARIABLE_RE, '');
+	const stripped = template.replace(VARIABLE_RE_SIMPLE, '');
 	return estimateTokenCount(stripped);
 }

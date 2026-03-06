@@ -3,7 +3,7 @@ import { basename, join, relative } from 'node:path';
 import { hashContent, hashInputsOutputs } from '../../manifest/hasher.js';
 import { loadManifest, saveManifest } from '../../manifest/manifest.js';
 import type {
-	DiagnosticError,
+	GenerateResult,
 	ManifestData,
 	OpmConfig,
 } from '../../types/index.js';
@@ -13,6 +13,7 @@ import {
 	generateFileContent,
 } from '../Emitter/index.js';
 import { parsePromptFile } from '../Parser/index.js';
+import { classifyDiagnosticError } from '../patterns.js';
 import { scanPromptFiles } from '../Scanner/index.js';
 import { resolveSnippets } from '../SnippetResolver/index.js';
 import {
@@ -21,12 +22,7 @@ import {
 } from '../TokenEstimator/index.js';
 import { bumpVersion, determineVersionBump } from '../VersionManager/index.js';
 
-export type GenerateResult = {
-	generated: number;
-	skipped: number;
-	errors: DiagnosticError[];
-	warnings: string[];
-};
+export type { GenerateResult } from '../../types/index.js';
 
 export function generate(config: OpmConfig): GenerateResult {
 	const { source, output } = config;
@@ -231,22 +227,10 @@ export function generate(config: OpmConfig): GenerateResult {
 		} catch (err) {
 			const message = err instanceof Error ? err.message : String(err);
 
-			// Determine error type
-			let errorType: DiagnosticError['type'] = 'parse';
-			if (message.includes('Circular dependency')) {
-				errorType = 'circular';
-			} else if (message.includes('Snippet')) {
-				errorType = 'snippet';
-			} else if (message.includes('Conflict')) {
-				errorType = 'conflict';
-			} else if (message.includes('Unsupported type')) {
-				errorType = 'schema';
-			}
-
 			result.errors.push({
 				filePath,
 				message,
-				type: errorType,
+				type: classifyDiagnosticError(message),
 			});
 		}
 	}

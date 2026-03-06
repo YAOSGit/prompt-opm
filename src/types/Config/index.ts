@@ -1,6 +1,6 @@
-export interface Config extends Record<string, unknown> {
+export type Config = Record<string, unknown> & {
 	temperature?: number;
 	topK?: number;
 	topP?: number;
 	maxTokens?: number;
-}
+};

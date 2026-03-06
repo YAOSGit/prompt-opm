@@ -1,4 +1,4 @@
-import type { SchemaValue } from '../../types/FrontMatter/index.js';
+import type { SchemaValue } from '../../types/index.js';
 
 const ENUM_RE = /^enum\((.+)\)$/;
 const ARRAY_RE = /^(\w+)\[\]$/;

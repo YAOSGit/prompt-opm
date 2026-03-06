@@ -1,6 +1,6 @@
 import chalk from 'chalk';
 import { generate } from '../../core/Generate/index.js';
-import { loadConfig } from '../load-config.js';
+import { loadConfig } from '../loadConfig.js';
 
 export function runGenerate(cwd: string): void {
 	const config = loadConfig(cwd);

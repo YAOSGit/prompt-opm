@@ -1,7 +1,10 @@
 import chalk from 'chalk';
 import { watch } from 'chokidar';
 import { generate } from '../../core/Generate/index.js';
-import { loadConfig } from '../load-config.js';
+import { loadConfig } from '../loadConfig.js';
+
+const STABILITY_THRESHOLD_MS = 100;
+const DEBOUNCE_DELAY_MS = 300;
 
 export function runWatch(cwd: string): void {
 	const config = loadConfig(cwd);
@@ -17,7 +20,7 @@ export function runWatch(cwd: string): void {
 
 	const watcher = watch(config.source, {
 		ignoreInitial: true,
-		awaitWriteFinish: { stabilityThreshold: 100 },
+		awaitWriteFinish: { stabilityThreshold: STABILITY_THRESHOLD_MS },
 	});
 
 	watcher.on('all', (event, path) => {
@@ -38,7 +41,7 @@ export function runWatch(cwd: string): void {
 			console.log(
 				`Generated ${chalk.green(result.generated)} file(s), skipped ${chalk.dim(String(result.skipped))} unchanged.`,
 			);
-		}, 300);
+		}, DEBOUNCE_DELAY_MS);
 	});
 
 	console.log(

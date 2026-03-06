@@ -1,10 +1,8 @@
 import { parse as parseYaml } from 'yaml';
-import type { FrontMatter } from '../../types/FrontMatter/index.js';
-import type { PromptFile } from '../../types/PromptFile/index.js';
+import type { FrontMatter, PromptFile } from '../../types/index.js';
+import { SNIPPET_RE, VARIABLE_RE } from '../patterns.js';
 
 const FRONTMATTER_RE = /^---\n([\s\S]*?)\n---\n?([\s\S]*)$/;
-const VARIABLE_RE = /\{\{\s*([a-zA-Z_]\w*)(?:\s*\|\s*"([^"]*)")?\s*\}\}/g;
-const SNIPPET_RE = /\{\{\s*(@\.?[\w/.:-][\w/.:=-]*)\s*\}\}/g;
 
 export function parsePromptFile(content: string, filePath: string): PromptFile {
 	const match = content.match(FRONTMATTER_RE);

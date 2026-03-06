@@ -1,6 +1,6 @@
 {
 	"name": "@yaos-git/prompt-opm",
-	"version": "126.0.2",
+	"version": "126.0.3",
 	"description": "A local-first Object Prompt Mapper and testing framework",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
@@ -55,7 +55,7 @@
 	},
 	"license": "ISC",
 	"engines": {
-		"node": ">=22.0.0"
+		"node": ">=18.0.0"
 	},
 	"type": "module",
 	"dependencies": {

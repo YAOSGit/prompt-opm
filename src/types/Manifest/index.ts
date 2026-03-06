@@ -1,4 +1,4 @@
-export interface ManifestEntry {
+export type ManifestEntry = {
 	version: string;
 	contentHash: string;
 	inputsHash: string;
@@ -6,9 +6,9 @@ export interface ManifestEntry {
 	dependencies: string[];
 	tokenEstimate: number;
 	inputTokenEstimate: number;
-}
+};
 
-export interface ManifestData {
+export type ManifestData = {
 	generatedAt: string;
 	files: Record<string, ManifestEntry>;
-}
+};

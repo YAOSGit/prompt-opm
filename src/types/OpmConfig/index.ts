@@ -1,5 +1,5 @@
-export interface OpmConfig {
+export type OpmConfig = {
 	source: string;
 	output: string;
 	manifest?: string;
-}
+};

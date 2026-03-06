@@ -1,21 +1,7 @@
-import type { SchemaValue } from '../../types/index.js';
+import type { EmitInput } from '../../types/index.js';
 import { mapSchemaToZodObjectString } from '../SchemaMapper/index.js';
 
-export type EmitInput = {
-	model: string;
-	configs: Record<string, unknown>;
-	meta: {
-		version: string;
-		lastUpdated: string;
-		sourceFile: string;
-		contentHash: string;
-		tokenEstimate: number;
-		inputTokenEstimate: number;
-	};
-	inputs: Record<string, SchemaValue>;
-	outputs: Record<string, SchemaValue>;
-	template: string;
-};
+export type { EmitInput } from '../../types/index.js';
 
 function formatValue(value: unknown, indent: string): string {
 	if (value === null || value === undefined) {

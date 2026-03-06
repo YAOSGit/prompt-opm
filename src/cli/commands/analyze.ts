@@ -1,7 +1,7 @@
 import { basename } from 'node:path';
 import chalk from 'chalk';
 import { analyze } from '../../core/Analyzer/index.js';
-import { loadConfig } from '../load-config.js';
+import { loadConfig } from '../loadConfig.js';
 
 type AnalyzeOptions = {
 	json: boolean;

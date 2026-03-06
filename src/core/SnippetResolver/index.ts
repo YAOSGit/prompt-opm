@@ -1,16 +1,14 @@
 import { readFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
-import type { PromptFile, SchemaValue } from '../../types/index.js';
+import type {
+	PromptFile,
+	ResolvedPrompt,
+	SchemaValue,
+} from '../../types/index.js';
 import { parsePromptFile } from '../Parser/index.js';
+import { SNIPPET_RE } from '../patterns.js';
 
-export type ResolvedPrompt = {
-	body: string;
-	mergedInputs: Record<string, SchemaValue>;
-	warnings: string[];
-	resolvedDependencies: string[];
-};
-
-const SNIPPET_RE = /\{\{\s*(@\.?[\w/.:-][\w/.:=-]*)\s*\}\}/g;
+export type { ResolvedPrompt } from '../../types/index.js';
 
 export function resolveSnippets(
 	file: PromptFile,

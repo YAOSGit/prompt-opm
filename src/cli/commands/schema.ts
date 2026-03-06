@@ -3,8 +3,8 @@ import chalk from 'chalk';
 import { parsePromptFile } from '../../core/Parser/index.js';
 import { scanPromptFiles } from '../../core/Scanner/index.js';
 import { resolveSnippets } from '../../core/SnippetResolver/index.js';
-import type { SchemaValue } from '../../types/FrontMatter/index.js';
-import { loadConfig } from '../load-config.js';
+import type { SchemaValue } from '../../types/index.js';
+import { loadConfig } from '../loadConfig.js';
 
 type JsonSchema = {
 	type: string;

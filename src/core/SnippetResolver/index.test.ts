@@ -1,10 +1,14 @@
 import { existsSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import type { PromptFile } from '../../types/index.js';
 import { resolveSnippets } from './index.js';
 
-const TEST_DIR = join(import.meta.dirname, '../../../.test-prompts-snippets');
+const TEST_DIR = join(
+	dirname(fileURLToPath(import.meta.url)),
+	'../../../.test-prompts-snippets',
+);
 
 beforeEach(() => {
 	mkdirSync(TEST_DIR, { recursive: true });

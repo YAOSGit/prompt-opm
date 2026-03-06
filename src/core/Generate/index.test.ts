@@ -5,13 +5,20 @@ import {
 	rmSync,
 	writeFileSync,
 } from 'node:fs';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import type { OpmConfig } from '../../types/index.js';
 import { generate } from './index.js';
 
-const TEST_SOURCE = join(import.meta.dirname, '../../../.test-generate-source');
-const TEST_OUTPUT = join(import.meta.dirname, '../../../.test-generate-output');
+const TEST_SOURCE = join(
+	dirname(fileURLToPath(import.meta.url)),
+	'../../../.test-generate-source',
+);
+const TEST_OUTPUT = join(
+	dirname(fileURLToPath(import.meta.url)),
+	'../../../.test-generate-output',
+);
 
 const config: OpmConfig = { source: TEST_SOURCE, output: TEST_OUTPUT };
 
@@ -131,7 +138,7 @@ describe('generate', () => {
 
 	it('uses custom manifest directory when configured', () => {
 		const manifestDir = join(
-			import.meta.dirname,
+			dirname(fileURLToPath(import.meta.url)),
 			'../../../.test-manifest-custom',
 		);
 		mkdirSync(manifestDir, { recursive: true });

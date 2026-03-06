@@ -7,7 +7,7 @@ import { resolveSnippets } from '../../core/SnippetResolver/index.js';
 import { determineVersionBump } from '../../core/VersionManager/index.js';
 import { hashContent, hashInputsOutputs } from '../../manifest/hasher.js';
 import { loadManifest } from '../../manifest/manifest.js';
-import { loadConfig } from '../load-config.js';
+import { loadConfig } from '../loadConfig.js';
 
 export function runDiff(cwd: string): void {
 	const config = loadConfig(cwd);

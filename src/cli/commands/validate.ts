@@ -1,10 +1,11 @@
 import { readFileSync } from 'node:fs';
 import chalk from 'chalk';
 import { parsePromptFile } from '../../core/Parser/index.js';
+import { VARIABLE_RE } from '../../core/patterns.js';
 import { scanPromptFiles } from '../../core/Scanner/index.js';
 import { resolveSnippets } from '../../core/SnippetResolver/index.js';
-import type { DiagnosticError } from '../../types/Diagnostics/index.js';
-import { loadConfig } from '../load-config.js';
+import type { DiagnosticError } from '../../types/index.js';
+import { loadConfig } from '../loadConfig.js';
 
 export function runValidate(cwd: string): void {
 	const config = loadConfig(cwd);
@@ -23,11 +24,12 @@ export function runValidate(cwd: string): void {
 			const declaredInputs = Object.keys(resolved.mergedInputs).map((k) =>
 				k.endsWith('?') ? k.slice(0, -1) : k,
 			);
-			const usedVariables =
-				resolved.body
-					.match(/\{\{\s*([a-zA-Z_]\w*)(?:\s*\|\s*"[^"]*")?\s*\}\}/g)
-					?.map((m) => m.match(/\{\{\s*([a-zA-Z_]\w*)/)?.[1] ?? '')
-					.filter((v) => v !== '' && !v.startsWith('@')) || [];
+			const usedVariables: string[] = [];
+			for (const m of resolved.body.matchAll(VARIABLE_RE)) {
+				if (m[1] && !m[1].startsWith('@')) {
+					usedVariables.push(m[1]);
+				}
+			}
 
 			const uniqueUsed = [...new Set(usedVariables)];
 

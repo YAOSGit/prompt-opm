@@ -6,7 +6,7 @@
 
 <div align="center">
 
-![Node Version](https://img.shields.io/badge/NODE-22+-16161D?style=for-the-badge&logo=nodedotjs&logoColor=white&labelColor=%235FA04E)
+![Node Version](https://img.shields.io/badge/NODE-18+-16161D?style=for-the-badge&logo=nodedotjs&logoColor=white&labelColor=%235FA04E)
 ![TypeScript Version](https://img.shields.io/badge/TYPESCRIPT-5.9-16161D?style=for-the-badge&logo=typescript&logoColor=white&labelColor=%233178C6)
 ![Zod](https://img.shields.io/badge/ZOD-16161D?style=for-the-badge&logo=zod&logoColor=white&labelColor=%233E67B1)
 
@@ -320,6 +320,55 @@ import type {
   DependencyNode,
 } from "@yaos-git/prompt-opm";
 ```
+
+---
+
+## Style Guide
+
+Conventions for contributing to this project. All rules are enforced by code review; Biome handles formatting and lint.
+
+### Exports
+
+- **Named exports only** — no `export default`. Every module uses `export function`, `export const`, or `export type`.
+- **`import type`** — always use `import type` for type-only imports.
+- **`.js` extensions** — all relative imports use explicit `.js` extensions (ESM requirement).
+
+### File Structure
+
+```
+src/
+├── cli/              # CLI entry point and command handlers
+│   └── commands/     # One file per CLI command
+├── core/             # Core pipeline modules (PascalCase directories)
+│   └── MyModule/
+│       ├── index.ts
+│       └── index.test.ts
+├── manifest/         # Manifest storage and hashing
+├── types/            # Shared type definitions (PascalCase directories)
+│   └── MyType/
+│       ├── index.ts
+│       └── MyType.test-d.ts
+```
+
+### Types
+
+- Use `type` for all type definitions.
+- Shared/exported types live in `src/types/TypeName/index.ts` with a co-located `TypeName.test-d.ts`.
+- All type imports use the barrel `src/types/index.ts` — never import from subdirectories directly.
+- No duplicate type definitions — import from the canonical source.
+
+### Constants & Patterns
+
+- Shared regex patterns live in `src/core/patterns.ts`.
+- No magic numbers — extract to named constants at the top of the file or in a `.consts.ts` file.
+- No duplicated logic — extract shared functions to a common module.
+
+### Testing
+
+- Every module has a co-located test file.
+- Core modules: `index.test.ts` inside the module directory.
+- CLI commands: `commandName.test.ts` in `src/cli/commands/`.
+- Types: `TypeName.test-d.ts` (type-level tests using `expectTypeOf`/`assertType`).
 
 ---
 

@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- Extracted type definitions for `BumpType`, `EmitInput`, `GenerateResult`, and `ResolvedPrompt` into their own dedicated directories under `src/types/`.
+- Created `src/core/patterns.ts` to centralize regex patterns across the codebase.
+- Added a new `examples/basic/` directory to replace the older `examples/basic-project/`.
+
+### Changed
+- Renamed `src/cli/load-config.ts` to `src/cli/loadConfig.ts` to follow camelCase file naming conventions.
+- Updated internal imports across `src/cli/`, `src/core/`, and `src/manifest/` to reflect the newly extracted type definitions and utilities.
+
+### Fixed
+- Fixed `TypeCheckError` in `BumpType` type checks caused by strict generic equality matching in `vitest`.
+- Cleaned up stale generated prompt outputs by removing the old `examples/basic-project/`.
+
 ## [0.2.0] - 2026-02-26
 
 ### Added

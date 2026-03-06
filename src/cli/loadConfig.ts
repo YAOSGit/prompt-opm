@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import type { OpmConfig } from '../types/OpmConfig/index.js';
+import type { OpmConfig } from '../types/index.js';
 
 export function loadConfig(cwd: string): OpmConfig {
 	const configPath = resolve(cwd, '.prompt-opm.config.json');

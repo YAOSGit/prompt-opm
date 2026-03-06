@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { ManifestEntry } from '../../types/Manifest/index.js';
+import type { ManifestEntry } from '../../types/index.js';
 import { bumpVersion, determineVersionBump } from './index.js';
 
 describe('bumpVersion', () => {
