@@ -1,4 +1,12 @@
-<h1 align="center">Yet another Open Source prompt-opm</h1>
+<p align="center">
+  <a href="https://github.com/YAOSGit/prompt-opm">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/YAOSGit/.github/main/profile/images/prompt-opm.svg">
+      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/YAOSGit/.github/main/profile/images/prompt-opm-light.svg">
+      <img src="https://raw.githubusercontent.com/YAOSGit/.github/main/profile/images/prompt-opm.svg" width="100%" alt="prompt-opm" />
+    </picture>
+  </a>
+</p>
 
 <p align="center">
   <strong>A local-first "Object Prompt Mapper" for type-safe LLM prompts</strong>
