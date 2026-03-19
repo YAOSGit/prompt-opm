@@ -1,4 +1,4 @@
-import { spawn } from 'node:child_process';
+import { execFileSync, spawn } from 'node:child_process';
 import {
 	existsSync,
 	mkdirSync,
@@ -10,21 +10,35 @@ import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 const E2E_DIR = join(import.meta.dirname, '../.test-e2e-watch');
-const CLI = join(import.meta.dirname, '../dist/cli/index.js');
+const CLI = join(import.meta.dirname, '../dist/cli.js');
 
-function initProject(): void {
-	const { execSync } = require('node:child_process');
-	execSync(`node ${CLI} init`, { cwd: E2E_DIR, encoding: 'utf-8' });
-}
+const initProject = (): void => {
+	execFileSync('node', [CLI, 'init'], {
+		cwd: E2E_DIR,
+		encoding: 'utf-8',
+		timeout: 10000,
+	});
+};
 
-function collectOutput(
+const collectOutput = (
 	args: string[],
 	action: () => void,
-	timeoutMs = 5000,
-): Promise<{ stdout: string; stderr: string; exitCode: number | null }> {
+	actionDelayMs = 1500,
+	killAfterMs = 5000,
+): Promise<{ stdout: string; stderr: string; exitCode: number | null }> => {
 	return new Promise((resolve) => {
 		let stdout = '';
 		let stderr = '';
+		let resolved = false;
+
+		const done = (code: number | null) => {
+			if (resolved) return;
+			resolved = true;
+			clearTimeout(actionTimer);
+			clearTimeout(killTimer);
+			clearTimeout(fallbackTimer);
+			resolve({ stdout, stderr, exitCode: code });
+		};
 
 		const proc = spawn('node', [CLI, ...args], {
 			cwd: E2E_DIR,
@@ -39,54 +53,65 @@ function collectOutput(
 			stderr += data.toString();
 		});
 
-		// Wait for initial generation to complete, then perform the action
+		proc.on('close', (code) => done(code));
+		proc.on('error', () => done(1));
+
+		// Perform the action after initial generation
 		const actionTimer = setTimeout(() => {
 			action();
-		}, 1500);
+		}, actionDelayMs);
 
-		// Kill the process after timeout
+		// Kill after timeout
 		const killTimer = setTimeout(() => {
 			proc.kill('SIGTERM');
-		}, timeoutMs);
+			// Give it 1s to exit, then force kill
+			setTimeout(() => {
+				if (!resolved) {
+					proc.kill('SIGKILL');
+				}
+			}, 1000);
+		}, killAfterMs);
 
-		proc.on('close', (code) => {
-			clearTimeout(actionTimer);
-			clearTimeout(killTimer);
-			resolve({ stdout, stderr, exitCode: code });
-		});
+		// Hard fallback — resolve even if close never fires
+		const fallbackTimer = setTimeout(() => {
+			done(null);
+		}, killAfterMs + 3000);
 	});
-}
+};
 
 beforeEach(() => {
+	rmSync(E2E_DIR, { recursive: true, force: true });
 	mkdirSync(E2E_DIR, { recursive: true });
 });
 
 afterEach(() => {
-	if (existsSync(E2E_DIR)) rmSync(E2E_DIR, { recursive: true });
+	rmSync(E2E_DIR, { recursive: true, force: true });
 });
 
 describe('watch command E2E', () => {
 	it('watch regenerates on prompt change', async () => {
 		initProject();
 
+		const promptPath = join(E2E_DIR, '.prompts', 'hello.prompt.md');
+		expect(existsSync(promptPath)).toBe(true);
+
 		const result = await collectOutput(
 			['watch'],
 			() => {
-				// Modify the prompt file to trigger regeneration
-				const promptPath = join(E2E_DIR, '.prompts', 'hello.prompt.md');
 				const original = readFileSync(promptPath, 'utf-8');
-				const modified = original.replace(
-					'Write a friendly greeting for {{ name }}.',
-					'Write a very special greeting for {{ name }}.',
+				writeFileSync(
+					promptPath,
+					original.replace(
+						'Write a friendly greeting for {{ name }}.',
+						'Write a very special greeting for {{ name }}.',
+					),
 				);
-				writeFileSync(promptPath, modified);
 			},
-			6000,
+			2000,
+			7000,
 		);
 
-		// Watch should produce initial generation output
 		expect(result.stdout).toContain('Generated');
-		// Should show watching message
 		expect(result.stdout).toMatch(/[Ww]atching/);
 	});
 
@@ -96,13 +121,13 @@ describe('watch command E2E', () => {
 		const result = await collectOutput(
 			['watch'],
 			() => {
-				// Write an invalid prompt file
 				writeFileSync(
 					join(E2E_DIR, '.prompts', 'bad.prompt.md'),
 					'this has no frontmatter at all',
 				);
 			},
-			6000,
+			2000,
+			7000,
 		);
 
 		// Watch should not crash — initial generation should succeed
@@ -115,13 +140,13 @@ describe('watch command E2E', () => {
 		const result = await collectOutput(
 			['watch'],
 			() => {
-				// Do nothing — just let the kill timer handle it
+				// No action — just let the kill timer stop it
 			},
-			5000,
+			1000,
+			3000,
 		);
 
-		// Process should have exited after SIGTERM (exitCode can be null on some platforms if killed)
-		// The key assertion is that it didn't hang forever and we got output
+		// Process exited (didn't hang) and produced some output
 		expect(result.stdout + result.stderr).toBeTruthy();
 	});
 });

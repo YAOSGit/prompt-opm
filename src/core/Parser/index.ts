@@ -1,28 +1,49 @@
-import { parse as parseYaml } from 'yaml';
+import { z } from 'zod';
+import { parseFrontmatter } from '@yaos-git/toolkit/cli/frontmatter';
 import type { FrontMatter, PromptFile } from '../../types/index.js';
 import { SNIPPET_RE, VARIABLE_RE } from '../patterns.js';
 
-const FRONTMATTER_RE = /^---\n([\s\S]*?)\n---\n?([\s\S]*)$/;
+const SchemaValueSchema: z.ZodType<
+	string | { [key: string]: unknown } | unknown[]
+> = z.lazy(() =>
+	z.union([
+		z.string(),
+		z.record(z.string(), SchemaValueSchema),
+		z.array(SchemaValueSchema),
+	]),
+);
+
+const FrontMatterSchema = z
+	.object({
+		model: z.string().optional().default(''),
+		version: z.string().optional(),
+		snippet: z.boolean().optional(),
+		config: z.record(z.string(), z.unknown()).optional(),
+		inputs: z.record(z.string(), SchemaValueSchema).optional(),
+		outputs: z.record(z.string(), SchemaValueSchema).optional(),
+	})
+	.refine(
+		(data) =>
+			data.snippet === true ||
+			(typeof data.model === 'string' && data.model.length > 0),
+		{ message: 'Missing required field: model', path: ['model'] },
+	);
 
 export function parsePromptFile(content: string, filePath: string): PromptFile {
-	const match = content.match(FRONTMATTER_RE);
-	if (!match) {
-		throw new Error(`[${filePath}] Invalid prompt file: missing frontmatter`);
+	let parsed: { frontmatter: z.infer<typeof FrontMatterSchema>; body: string };
+	try {
+		parsed = parseFrontmatter(content, FrontMatterSchema);
+	} catch (err) {
+		const msg = err instanceof Error ? err.message : String(err);
+		throw new Error(`[${filePath}] Invalid prompt file: ${msg}`);
 	}
 
-	const [, yamlStr, body] = match;
-	const raw = parseYaml(yamlStr) as Record<string, unknown>;
-
-	const isSnippet = raw.snippet === true;
-
-	if (!isSnippet && (!raw.model || typeof raw.model !== 'string')) {
-		throw new Error(`[${filePath}] Missing required field: model`);
-	}
+	const { frontmatter: raw, body } = parsed;
 
 	const frontmatter: FrontMatter = {
-		model: typeof raw.model === 'string' ? raw.model : '',
-		version: typeof raw.version === 'string' ? raw.version : undefined,
-		snippet: isSnippet ? true : undefined,
+		model: raw.model,
+		version: raw.version,
+		snippet: raw.snippet ? true : undefined,
 		config: raw.config as FrontMatter['config'],
 		inputs: raw.inputs as Record<string, string> | undefined,
 		outputs: raw.outputs as Record<string, string> | undefined,

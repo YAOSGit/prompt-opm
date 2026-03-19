@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { basename, relative } from 'node:path';
+import { formatError } from '@yaos-git/toolkit/cli';
 import type {
 	AnalyzeResult,
 	DiagnosticError,
@@ -53,7 +54,7 @@ export function analyze(config: OpmConfig): AnalyzeResult {
 
 			dependencyGraph[moduleName] = dependencies;
 		} catch (err) {
-			const message = err instanceof Error ? err.message : String(err);
+			const message = formatError(err);
 			errors.push({
 				filePath,
 				message,

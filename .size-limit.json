@@ -1,8 +1,8 @@
 [
 	{
-		"path": "dist/index.js"
+		"path": "dist/cli.js"
 	},
 	{
-		"path": "dist/cli/index.js"
+		"path": "dist/lib.js"
 	}
 ]

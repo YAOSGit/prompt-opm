@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [126.1.0] - 2026-03-19
 
 ### Added
 - Extracted type definitions for `BumpType`, `EmitInput`, `GenerateResult`, and `ResolvedPrompt` into their own dedicated directories under `src/types/`.
@@ -13,10 +13,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added a new `examples/basic/` directory to replace the older `examples/basic-project/`.
 
 ### Changed
+- All barrel `index.ts` files created for core/, manifest/, cli/commands/
+- `tsconfig.app.json` added `rootDir` and `types: ["node"]`
 - Renamed `src/cli/load-config.ts` to `src/cli/loadConfig.ts` to follow camelCase file naming conventions.
 - Updated internal imports across `src/cli/`, `src/core/`, and `src/manifest/` to reflect the newly extracted type definitions and utilities.
+- Toolkit bumped to 0.0.26-3-19a
+- Biome updated to 2.4.8
 
 ### Fixed
+- E2E test CLI path: `dist/cli/index.js` → `dist/cli.js` across all 11 test files
+- Watch e2e tests: replaced `require()` with ESM imports, added SIGKILL escalation and fallback timer
 - Fixed `TypeCheckError` in `BumpType` type checks caused by strict generic equality matching in `vitest`.
 - Cleaned up stale generated prompt outputs by removing the old `examples/basic-project/`.
 

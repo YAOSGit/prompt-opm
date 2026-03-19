@@ -1,21 +1,15 @@
-import { defineConfig } from 'vitest/config';
+import { rootConfig } from '@yaos-git/toolkit/build';
 
-export default defineConfig({
+const config = rootConfig();
+
+export default {
+	...config,
 	test: {
+		...config.test,
 		projects: [
 			'./vitest.unit.config.ts',
 			'./vitest.type.config.ts',
 			'./vitest.e2e.config.ts',
 		],
-		coverage: {
-			include: ['src/**/*.ts'],
-			exclude: [
-				'e2e/**',
-				'src/cli/**',
-				'node_modules/**',
-				'**/*.test.ts',
-				'**/*.test-d.ts',
-			],
-		},
 	},
-});
+};

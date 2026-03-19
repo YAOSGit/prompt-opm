@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { basename, relative } from 'node:path';
 import chalk from 'chalk';
+import { formatError } from '@yaos-git/toolkit/cli';
 import { parsePromptFile } from '../../core/Parser/index.js';
 import { scanPromptFiles } from '../../core/Scanner/index.js';
 import { resolveSnippets } from '../../core/SnippetResolver/index.js';
@@ -51,7 +52,7 @@ export function runDiff(cwd: string): void {
 		} catch (err) {
 			changes.push(
 				chalk.red(
-					`  ! ${moduleName}.ts (error: ${err instanceof Error ? err.message : String(err)})`,
+					`  ! ${moduleName}.ts (error: ${formatError(err)})`,
 				),
 			);
 		}

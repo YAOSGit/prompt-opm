@@ -10,7 +10,7 @@ import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 const E2E_DIR = join(import.meta.dirname, '../.test-e2e-multi-prompt');
-const CLI = join(import.meta.dirname, '../dist/cli/index.js');
+const CLI = join(import.meta.dirname, '../dist/cli.js');
 
 function run(command: string): string {
 	return execSync(`node ${CLI} ${command}`, {

@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs';
 import chalk from 'chalk';
+import { fatalError } from '@yaos-git/toolkit/cli';
 import { parsePromptFile } from '../../core/Parser/index.js';
 import { scanPromptFiles } from '../../core/Scanner/index.js';
 import { resolveSnippets } from '../../core/SnippetResolver/index.js';
@@ -46,8 +47,7 @@ export function runSchema(cwd: string, options: { format: string }): void {
 	if (options.format === 'jsonschema') {
 		console.log(output);
 	} else {
-		console.error(chalk.red(`Unsupported format: ${options.format}`));
-		process.exitCode = 1;
+		fatalError(`Unsupported format: ${options.format}`);
 		return;
 	}
 }

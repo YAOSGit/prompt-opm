@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs';
 import chalk from 'chalk';
+import { formatError } from '@yaos-git/toolkit/cli';
 import { parsePromptFile } from '../../core/Parser/index.js';
 import { VARIABLE_RE } from '../../core/patterns.js';
 import { scanPromptFiles } from '../../core/Scanner/index.js';
@@ -57,7 +58,7 @@ export function runValidate(cwd: string): void {
 		} catch (err) {
 			errors.push({
 				filePath,
-				message: err instanceof Error ? err.message : String(err),
+				message: formatError(err),
 				type: 'parse',
 			});
 		}

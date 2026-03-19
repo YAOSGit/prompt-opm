@@ -32,16 +32,25 @@ export function runWatch(cwd: string): void {
 			console.log(`\nFile ${chalk.cyan(event)}: ${chalk.dim(path)}`);
 			console.log(chalk.dim('Regenerating...'));
 
-			const result = generate(config);
+			try {
+				const result = generate(config);
 
-			for (const err of result.errors) {
-				console.error(chalk.red(`ERROR [${err.filePath}]: ${err.message}`));
+				for (const err of result.errors) {
+					console.error(chalk.red(`ERROR [${err.filePath}]: ${err.message}`));
+				}
+
+				console.log(
+					`Generated ${chalk.green(result.generated)} file(s), skipped ${chalk.dim(String(result.skipped))} unchanged.`,
+				);
+			} catch (err) {
+				console.error(chalk.red(`Watch regeneration failed: ${err instanceof Error ? err.message : String(err)}`));
 			}
-
-			console.log(
-				`Generated ${chalk.green(result.generated)} file(s), skipped ${chalk.dim(String(result.skipped))} unchanged.`,
-			);
 		}, DEBOUNCE_DELAY_MS);
+	});
+
+	process.on('SIGINT', () => {
+		watcher.close();
+		process.exit(0);
 	});
 
 	console.log(

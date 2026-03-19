@@ -1,5 +1,6 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { basename, join, relative } from 'node:path';
+import { formatError } from '@yaos-git/toolkit/cli';
 import { hashContent, hashInputsOutputs } from '../../manifest/hasher.js';
 import { loadManifest, saveManifest } from '../../manifest/manifest.js';
 import type {
@@ -225,7 +226,7 @@ export function generate(config: OpmConfig): GenerateResult {
 
 			result.generated++;
 		} catch (err) {
-			const message = err instanceof Error ? err.message : String(err);
+			const message = formatError(err);
 
 			result.errors.push({
 				filePath,
