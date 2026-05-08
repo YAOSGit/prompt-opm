@@ -1,9 +1,9 @@
 <p align="center">
   <a href="https://github.com/YAOSGit/prompt-opm">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/YAOSGit/.github/main/profile/images/prompt-opm.svg">
-      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/YAOSGit/.github/main/profile/images/prompt-opm-light.svg">
-      <img src="https://raw.githubusercontent.com/YAOSGit/.github/main/profile/images/prompt-opm.svg" width="100%" alt="prompt-opm" />
+      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/YAOSGit/.github/main/images/prompt-opm.svg">
+      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/YAOSGit/.github/main/images/prompt-opm-light.svg">
+      <img src="https://raw.githubusercontent.com/YAOSGit/.github/main/images/prompt-opm.svg" width="100%" alt="prompt-opm" />
     </picture>
   </a>
 </p>
@@ -14,12 +14,12 @@
 
 <div align="center">
 
-![Node Version](https://img.shields.io/badge/NODE-18+-16161D?style=for-the-badge&logo=nodedotjs&logoColor=white&labelColor=%235FA04E)
-![TypeScript Version](https://img.shields.io/badge/TYPESCRIPT-5.9-16161D?style=for-the-badge&logo=typescript&logoColor=white&labelColor=%233178C6)
-![Zod](https://img.shields.io/badge/ZOD-16161D?style=for-the-badge&logo=zod&logoColor=white&labelColor=%233E67B1)
+![Node Version](https://img.shields.io/badge/NODE-18+-16161D?style=for-the-badge&logo=nodedotjs&logoColor=white&labelColor=%23FF9900)
+![TypeScript Version](https://img.shields.io/badge/TYPESCRIPT-5.9-16161D?style=for-the-badge&logo=typescript&logoColor=white&labelColor=%23FF9900)
+![Zod](https://img.shields.io/badge/ZOD-16161D?style=for-the-badge&logo=zod&logoColor=white&labelColor=%23FF9900)
 
-![Uses Vitest](https://img.shields.io/badge/VITEST-16161D?style=for-the-badge&logo=vitest&logoColor=white&labelColor=%236E9F18)
-![Uses Biome](https://img.shields.io/badge/BIOME-16161D?style=for-the-badge&logo=biome&logoColor=white&labelColor=%2360A5FA)
+![Uses Vitest](https://img.shields.io/badge/VITEST-16161D?style=for-the-badge&logo=vitest&logoColor=white&labelColor=%23FF9900)
+![Uses Biome](https://img.shields.io/badge/BIOME-16161D?style=for-the-badge&logo=biome&logoColor=white&labelColor=%23FF9900)
 
 </div>
 

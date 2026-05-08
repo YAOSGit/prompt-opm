@@ -1,4 +1,10 @@
-import { existsSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
+import {
+	existsSync,
+	mkdirSync,
+	readFileSync,
+	rmSync,
+	writeFileSync,
+} from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -72,9 +78,13 @@ describe('runDiff', () => {
 			output: join(TEST_DIR, 'src/generated/prompts'),
 		});
 
+		const stamped = readFileSync(
+			join(TEST_DIR, '.prompts', 'patch.prompt.md'),
+			'utf-8',
+		);
 		writeFileSync(
 			join(TEST_DIR, '.prompts', 'patch.prompt.md'),
-			'---\nmodel: test\nversion: "1.0.0"\n---\nModified body',
+			stamped.replace('Original body', 'Modified body'),
 		);
 
 		runDiff(TEST_DIR);
@@ -95,10 +105,14 @@ describe('runDiff', () => {
 			output: join(TEST_DIR, 'src/generated/prompts'),
 		});
 
-		writeFileSync(
+		const stamped = readFileSync(
 			join(TEST_DIR, '.prompts', 'minor.prompt.md'),
-			'---\nmodel: test\nversion: "1.0.0"\ninputs:\n  x: string\n  y: number\n---\nBody {{ x }} {{ y }}',
+			'utf-8',
 		);
+		const modified = stamped
+			.replace('  x: string', '  x: string\n  y: number')
+			.replace('Body {{ x }}', 'Body {{ x }} {{ y }}');
+		writeFileSync(join(TEST_DIR, '.prompts', 'minor.prompt.md'), modified);
 
 		runDiff(TEST_DIR);
 
@@ -138,9 +152,13 @@ describe('runDiff', () => {
 			output: join(TEST_DIR, 'src/generated/prompts'),
 		});
 
+		const stamped = readFileSync(
+			join(TEST_DIR, '.prompts', 'existing.prompt.md'),
+			'utf-8',
+		);
 		writeFileSync(
 			join(TEST_DIR, '.prompts', 'existing.prompt.md'),
-			'---\nmodel: test\nversion: "1.0.0"\n---\nModified',
+			stamped.replace('Existing', 'Modified'),
 		);
 		writeFileSync(
 			join(TEST_DIR, '.prompts', 'brand-new.prompt.md'),

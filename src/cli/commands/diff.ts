@@ -1,11 +1,10 @@
 import { readFileSync } from 'node:fs';
 import { basename, relative } from 'node:path';
-import chalk from 'chalk';
 import { formatError } from '@yaos-git/toolkit/cli';
+import chalk from 'chalk';
 import { parsePromptFile } from '../../core/Parser/index.js';
 import { scanPromptFiles } from '../../core/Scanner/index.js';
 import { resolveSnippets } from '../../core/SnippetResolver/index.js';
-import { determineVersionBump } from '../../core/VersionManager/index.js';
 import { hashContent, hashInputsOutputs } from '../../manifest/hasher.js';
 import { loadManifest } from '../../manifest/manifest.js';
 import { loadConfig } from '../loadConfig.js';
@@ -26,39 +25,38 @@ export function runDiff(cwd: string): void {
 
 		try {
 			const content = readFileSync(filePath, 'utf-8');
-			const contentHash = hashContent(content);
-			const prev = manifest.files[relPath];
-
-			if (!prev) {
-				changes.push(chalk.green(`  + ${moduleName}.ts (new)`));
-				continue;
-			}
-
-			if (prev.contentHash === contentHash) {
-				continue;
-			}
-
 			const parsed = parsePromptFile(content, filePath);
+			const bodyHash = hashContent(parsed.body);
 			const resolved = resolveSnippets(parsed, config.source);
 			const inputsHash = hashInputsOutputs(
 				resolved.mergedInputs,
 				parsed.frontmatter.outputs,
 			);
-			const bump = determineVersionBump(prev, contentHash, inputsHash, false);
 
-			if (bump) {
-				changes.push(chalk.yellow(`  ~ ${moduleName}.ts (${bump} bump)`));
+			const fm = parsed.frontmatter;
+			const isNew = !manifest.files[relPath] && !fm.contentHash;
+
+			if (isNew) {
+				changes.push(chalk.green(`  + ${moduleName}.ts (new)`));
+				continue;
 			}
+
+			const contentChanged = fm.contentHash !== bodyHash;
+			const inputsChanged = fm.inputsHash !== inputsHash;
+
+			if (!contentChanged && !inputsChanged) {
+				continue;
+			}
+
+			const bump = contentChanged && inputsChanged ? 'minor' : 'patch';
+			changes.push(chalk.yellow(`  ~ ${moduleName}.ts (${bump} bump)`));
 		} catch (err) {
 			changes.push(
-				chalk.red(
-					`  ! ${moduleName}.ts (error: ${formatError(err)})`,
-				),
+				chalk.red(`  ! ${moduleName}.ts (error: ${formatError(err)})`),
 			);
 		}
 	}
 
-	// Detect removed files
 	for (const relPath of Object.keys(manifest.files)) {
 		if (!currentFiles.has(relPath)) {
 			const moduleName = basename(relPath, '.prompt.md');

@@ -4,7 +4,11 @@ import { describe, expect, it } from 'vitest';
 
 const CLI = path.resolve(import.meta.dirname, '../dist/cli.js');
 
-function run(args: string[]): { stdout: string; stderr: string; exitCode: number } {
+function run(args: string[]): {
+	stdout: string;
+	stderr: string;
+	exitCode: number;
+} {
 	try {
 		const stdout = execFileSync('node', [CLI, ...args], {
 			encoding: 'utf-8',

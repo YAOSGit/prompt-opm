@@ -1,5 +1,5 @@
-import { z } from 'zod';
 import { parseFrontmatter } from '@yaos-git/toolkit/cli/frontmatter';
+import { z } from 'zod';
 import type { FrontMatter, PromptFile } from '../../types/index.js';
 import { SNIPPET_RE, VARIABLE_RE } from '../patterns.js';
 
@@ -21,6 +21,9 @@ const FrontMatterSchema = z
 		config: z.record(z.string(), z.unknown()).optional(),
 		inputs: z.record(z.string(), SchemaValueSchema).optional(),
 		outputs: z.record(z.string(), SchemaValueSchema).optional(),
+		contentHash: z.string().optional(),
+		inputsHash: z.string().optional(),
+		outputsHash: z.string().optional(),
 	})
 	.refine(
 		(data) =>
@@ -47,6 +50,9 @@ export function parsePromptFile(content: string, filePath: string): PromptFile {
 		config: raw.config as FrontMatter['config'],
 		inputs: raw.inputs as Record<string, string> | undefined,
 		outputs: raw.outputs as Record<string, string> | undefined,
+		contentHash: raw.contentHash,
+		inputsHash: raw.inputsHash,
+		outputsHash: raw.outputsHash,
 	};
 
 	const variables: string[] = [];

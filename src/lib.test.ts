@@ -79,7 +79,9 @@ describe('lib re-exports', () => {
 	});
 
 	it('exports generateBarrelContent and generateFileContent from Emitter', async () => {
-		const { generateBarrelContent, generateFileContent } = await import('./lib.js');
+		const { generateBarrelContent, generateFileContent } = await import(
+			'./lib.js'
+		);
 		expect(generateBarrelContent).toBeDefined();
 		expect(generateFileContent).toBeDefined();
 	});
@@ -103,7 +105,9 @@ describe('lib re-exports', () => {
 	});
 
 	it('exports mapSchemaToZodObjectString and mapTypeToZod from SchemaMapper', async () => {
-		const { mapSchemaToZodObjectString, mapTypeToZod } = await import('./lib.js');
+		const { mapSchemaToZodObjectString, mapTypeToZod } = await import(
+			'./lib.js'
+		);
 		expect(mapSchemaToZodObjectString).toBeDefined();
 		expect(mapTypeToZod).toBeDefined();
 	});
@@ -115,7 +119,9 @@ describe('lib re-exports', () => {
 	});
 
 	it('exports estimateFixedTokens and estimateTemplateTokens from TokenEstimator', async () => {
-		const { estimateFixedTokens, estimateTemplateTokens } = await import('./lib.js');
+		const { estimateFixedTokens, estimateTemplateTokens } = await import(
+			'./lib.js'
+		);
 		expect(estimateFixedTokens).toBeDefined();
 		expect(estimateTemplateTokens).toBeDefined();
 	});

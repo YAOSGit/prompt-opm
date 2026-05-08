@@ -86,9 +86,10 @@ describe('generate', () => {
 		);
 		generate(config);
 
+		const stamped = readFileSync(join(TEST_SOURCE, 'bump.prompt.md'), 'utf-8');
 		writeFileSync(
 			join(TEST_SOURCE, 'bump.prompt.md'),
-			'---\nmodel: test\nversion: "1.0.0"\ninputs:\n  x: string\n---\nNew body {{ x }}',
+			stamped.replace('Old body {{ x }}', 'New body {{ x }}'),
 		);
 		const result = generate(config);
 
@@ -104,10 +105,11 @@ describe('generate', () => {
 		);
 		generate(config);
 
-		writeFileSync(
-			join(TEST_SOURCE, 'minor.prompt.md'),
-			'---\nmodel: test\nversion: "1.0.0"\ninputs:\n  x: string\n  y: number\n---\nBody {{ x }} {{ y }}',
-		);
+		const stamped = readFileSync(join(TEST_SOURCE, 'minor.prompt.md'), 'utf-8');
+		const modified = stamped
+			.replace('  x: string', '  x: string\n  y: number')
+			.replace('Body {{ x }}', 'Body {{ x }} {{ y }}');
+		writeFileSync(join(TEST_SOURCE, 'minor.prompt.md'), modified);
 		const result = generate(config);
 
 		expect(result.generated).toBe(1);

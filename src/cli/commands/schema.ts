@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
-import chalk from 'chalk';
 import { fatalError } from '@yaos-git/toolkit/cli';
+import chalk from 'chalk';
 import { parsePromptFile } from '../../core/Parser/index.js';
 import { scanPromptFiles } from '../../core/Scanner/index.js';
 import { resolveSnippets } from '../../core/SnippetResolver/index.js';

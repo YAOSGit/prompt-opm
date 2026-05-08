@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import {
+	classifyDiagnosticError,
 	SNIPPET_RE,
 	VARIABLE_RE,
 	VARIABLE_RE_SIMPLE,
-	classifyDiagnosticError,
 } from './patterns.js';
 
 describe('SNIPPET_RE', () => {
@@ -138,19 +138,27 @@ describe('VARIABLE_RE_SIMPLE', () => {
 
 describe('classifyDiagnosticError', () => {
 	it('classifies circular dependency errors', () => {
-		expect(classifyDiagnosticError('Circular dependency detected between A and B')).toBe('circular');
+		expect(
+			classifyDiagnosticError('Circular dependency detected between A and B'),
+		).toBe('circular');
 	});
 
 	it('classifies snippet errors', () => {
-		expect(classifyDiagnosticError('Snippet @header not found')).toBe('snippet');
+		expect(classifyDiagnosticError('Snippet @header not found')).toBe(
+			'snippet',
+		);
 	});
 
 	it('classifies conflict errors', () => {
-		expect(classifyDiagnosticError('Conflict in merged inputs for key "name"')).toBe('conflict');
+		expect(
+			classifyDiagnosticError('Conflict in merged inputs for key "name"'),
+		).toBe('conflict');
 	});
 
 	it('classifies schema errors', () => {
-		expect(classifyDiagnosticError('Unsupported type: "complex"')).toBe('schema');
+		expect(classifyDiagnosticError('Unsupported type: "complex"')).toBe(
+			'schema',
+		);
 	});
 
 	it('defaults to parse for unrecognized messages', () => {
@@ -163,6 +171,8 @@ describe('classifyDiagnosticError', () => {
 
 	it('prioritizes earlier checks for messages with multiple keywords', () => {
 		// "Circular dependency" is checked first
-		expect(classifyDiagnosticError('Circular dependency in Snippet')).toBe('circular');
+		expect(classifyDiagnosticError('Circular dependency in Snippet')).toBe(
+			'circular',
+		);
 	});
 });

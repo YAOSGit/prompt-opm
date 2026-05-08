@@ -7,6 +7,7 @@ import type {
 	GenerateResult,
 	ManifestData,
 	OpmConfig,
+	PromptFile,
 } from '../../types/index.js';
 import type { EmitInput } from '../Emitter/index.js';
 import {
@@ -21,7 +22,7 @@ import {
 	estimateFixedTokens,
 	estimateTemplateTokens,
 } from '../TokenEstimator/index.js';
-import { bumpVersion, determineVersionBump } from '../VersionManager/index.js';
+import { bumpVersion } from '../VersionManager/index.js';
 
 export type { GenerateResult } from '../../types/index.js';
 
@@ -43,9 +44,10 @@ export function generate(config: OpmConfig): GenerateResult {
 	// 3. Scan source directory for .prompt.md files
 	const filePaths = scanPromptFiles(source);
 
-	// 4. First pass: detect dirty files by comparing content hashes
+	// 4. First pass: parse files and detect dirty ones by comparing body hashes
 	const fileContents = new Map<string, string>();
-	const fileContentHashes = new Map<string, string>();
+	const fileParsed = new Map<string, PromptFile>();
+	const fileBodyHashes = new Map<string, string>();
 	const relPaths = new Map<string, string>();
 	const dirtySet = new Set<string>();
 
@@ -56,11 +58,18 @@ export function generate(config: OpmConfig): GenerateResult {
 		const rawContent = readFileSync(filePath, 'utf-8');
 		fileContents.set(filePath, rawContent);
 
-		const contentHash = hashContent(rawContent);
-		fileContentHashes.set(filePath, contentHash);
+		try {
+			const parsed = parsePromptFile(rawContent, filePath);
+			fileParsed.set(filePath, parsed);
 
-		const prevEntry = oldManifest.files[relPath];
-		if (!prevEntry || prevEntry.contentHash !== contentHash) {
+			const bodyHash = hashContent(parsed.body);
+			fileBodyHashes.set(filePath, bodyHash);
+
+			const prevEntry = oldManifest.files[relPath];
+			if (!prevEntry || prevEntry.contentHash !== bodyHash) {
+				dirtySet.add(filePath);
+			}
+		} catch {
 			dirtySet.add(filePath);
 		}
 	}
@@ -109,22 +118,17 @@ export function generate(config: OpmConfig): GenerateResult {
 		if (!relPath) continue;
 		const moduleName = basename(relPath, '.prompt.md');
 
-		// Quick-parse to check if this is a snippet-only file
-		const rawCheck = fileContents.get(filePath);
-		if (rawCheck) {
-			try {
-				const check = parsePromptFile(rawCheck, filePath);
-				if (check.frontmatter.snippet) {
-					// Snippet-only files are not emitted as modules
-					continue;
-				}
-			} catch {
-				// Full parse failed — check raw YAML for snippet: true
-				// to prevent snippet files from leaking into barrel exports
-				if (/^---\n[\s\S]*?snippet:\s*true[\s\S]*?\n---/.test(rawCheck)) {
-					continue;
-				}
-				// Other parse errors will be caught in the main try block below
+		const cachedParsed = fileParsed.get(filePath);
+		if (cachedParsed?.frontmatter.snippet) {
+			continue;
+		}
+		if (!cachedParsed) {
+			const rawCheck = fileContents.get(filePath);
+			if (
+				rawCheck &&
+				/^---\n[\s\S]*?snippet:\s*true[\s\S]*?\n---/.test(rawCheck)
+			) {
+				continue;
 			}
 		}
 
@@ -139,13 +143,11 @@ export function generate(config: OpmConfig): GenerateResult {
 
 		try {
 			const rawContent = fileContents.get(filePath);
-			const contentHash = fileContentHashes.get(filePath);
-			if (!rawContent || !contentHash) continue;
+			if (!rawContent) continue;
 
-			// Parse the prompt file
-			const parsed = parsePromptFile(rawContent, filePath);
+			const parsed = cachedParsed ?? parsePromptFile(rawContent, filePath);
+			const bodyHash = fileBodyHashes.get(filePath) ?? hashContent(parsed.body);
 
-			// Resolve snippets
 			const resolved = resolveSnippets(parsed, source);
 			result.warnings.push(...resolved.warnings);
 
@@ -154,34 +156,76 @@ export function generate(config: OpmConfig): GenerateResult {
 			const inputsHash = hashInputsOutputs(inputs, outputs);
 			const outputsHash = hashInputsOutputs(undefined, outputs);
 
-			// Determine version bump
 			let version = parsed.frontmatter.version ?? '0.1.0';
-			const prevEntry = oldManifest.files[relPath];
 
-			if (prevEntry) {
-				const hasDirtyDep = resolved.resolvedDependencies.some((dep) => {
-					const depRel = relative(source, dep);
-					return dirtySet.has(dep) || dirtySet.has(join(source, depRel));
-				});
+			const hasExistingHashes = parsed.frontmatter.contentHash != null;
+			const contentChanged =
+				hasExistingHashes && parsed.frontmatter.contentHash !== bodyHash;
+			const inputsChanged =
+				hasExistingHashes && parsed.frontmatter.inputsHash !== inputsHash;
+			const outputsChanged =
+				hasExistingHashes && parsed.frontmatter.outputsHash !== outputsHash;
+			const hasDirtyDep = resolved.resolvedDependencies.some((dep) => {
+				const depRel = relative(source, dep);
+				return dirtySet.has(dep) || dirtySet.has(join(source, depRel));
+			});
 
-				const bumpType = determineVersionBump(
-					prevEntry,
-					contentHash,
-					inputsHash,
-					hasDirtyDep,
-				);
+			const needsHashUpdate =
+				!hasExistingHashes || contentChanged || inputsChanged || outputsChanged;
 
-				if (bumpType) {
-					const newVersion = bumpVersion(version, bumpType);
+			if (
+				contentChanged ||
+				outputsChanged ||
+				(hasExistingHashes && hasDirtyDep)
+			) {
+				const bumpType =
+					(contentChanged && inputsChanged) || outputsChanged
+						? 'minor'
+						: 'patch';
+				version = bumpVersion(version, bumpType);
+			}
 
-					// Write updated version back into source .prompt.md file
-					const updatedContent = rawContent.replace(
-						`version: "${version}"`,
-						`version: "${newVersion}"`,
-					);
-					writeFileSync(filePath, updatedContent, 'utf-8');
-					version = newVersion;
+			if (needsHashUpdate || contentChanged || hasDirtyDep) {
+				let updated = rawContent;
+				const fm = parsed.frontmatter;
+
+				const replacements: [string | undefined, string, string][] = [
+					[fm.version, 'version', version],
+					[fm.contentHash, 'contentHash', bodyHash],
+					[fm.inputsHash, 'inputsHash', inputsHash],
+					[fm.outputsHash, 'outputsHash', outputsHash],
+				];
+
+				const insertLines: string[] = [];
+				for (const [existing, key, value] of replacements) {
+					if (existing != null) {
+						updated = updated.replace(
+							new RegExp(
+								`^(${key}:\\s*)"${existing.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}"`,
+								'm',
+							),
+							`$1"${value}"`,
+						);
+					} else {
+						insertLines.push(`${key}: "${value}"`);
+					}
 				}
+
+				if (insertLines.length > 0) {
+					const closingIdx =
+						updated.indexOf('\n---\n', 3) !== -1
+							? updated.indexOf('\n---\n', 3)
+							: updated.indexOf('\n---', 3);
+					if (closingIdx !== -1) {
+						updated =
+							updated.slice(0, closingIdx) +
+							'\n' +
+							insertLines.join('\n') +
+							updated.slice(closingIdx);
+					}
+				}
+
+				writeFileSync(filePath, updated, 'utf-8');
 			}
 
 			// Build dependencies list (relative paths)
@@ -201,7 +245,7 @@ export function generate(config: OpmConfig): GenerateResult {
 					version,
 					lastUpdated: new Date().toISOString(),
 					sourceFile: relPath,
-					contentHash,
+					contentHash: bodyHash,
 					tokenEstimate,
 					inputTokenEstimate,
 				},
@@ -216,7 +260,7 @@ export function generate(config: OpmConfig): GenerateResult {
 			// Build new manifest entry
 			newManifest.files[relPath] = {
 				version,
-				contentHash,
+				contentHash: bodyHash,
 				inputsHash,
 				outputsHash,
 				dependencies,
@@ -238,9 +282,7 @@ export function generate(config: OpmConfig): GenerateResult {
 
 	// 6. Write barrel index.ts
 	const barrelContent = generateBarrelContent(moduleNames.sort());
-	if (barrelContent) {
-		writeFileSync(join(output, 'index.ts'), barrelContent, 'utf-8');
-	}
+	writeFileSync(join(output, 'index.ts'), barrelContent || '', 'utf-8');
 
 	// 7. Save updated manifest
 	saveManifest(manifestDir, newManifest);

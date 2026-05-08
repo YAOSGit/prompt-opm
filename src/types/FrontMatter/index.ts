@@ -12,4 +12,7 @@ export type FrontMatter = {
 	config?: Config;
 	inputs?: Record<string, SchemaValue>;
 	outputs?: Record<string, SchemaValue>;
+	contentHash?: string;
+	inputsHash?: string;
+	outputsHash?: string;
 };

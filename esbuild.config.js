@@ -1,5 +1,5 @@
-import * as esbuild from 'esbuild';
 import { createEsbuildConfig } from '@yaos-git/toolkit/build';
+import * as esbuild from 'esbuild';
 
 const baseConfig = createEsbuildConfig({ entry: 'src/cli/index.ts' });
 const external = ['zod', ...baseConfig.external];

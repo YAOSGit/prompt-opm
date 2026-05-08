@@ -183,9 +183,7 @@ describe('runSchema', () => {
 			source: '/src/prompts',
 			output: '/src/generated',
 		});
-		vi.mocked(scanPromptFiles).mockReturnValue([
-			'/src/prompts/test.prompt.md',
-		]);
+		vi.mocked(scanPromptFiles).mockReturnValue(['/src/prompts/test.prompt.md']);
 		vi.mocked(readFileSync).mockReturnValue('file content');
 		vi.mocked(parsePromptFile).mockReturnValue({
 			filePath: '/src/prompts/test.prompt.md',
@@ -219,9 +217,7 @@ describe('runSchema', () => {
 			source: '/src/prompts',
 			output: '/src/generated',
 		});
-		vi.mocked(scanPromptFiles).mockReturnValue([
-			'/src/prompts/list.prompt.md',
-		]);
+		vi.mocked(scanPromptFiles).mockReturnValue(['/src/prompts/list.prompt.md']);
 		vi.mocked(readFileSync).mockReturnValue('file content');
 		vi.mocked(parsePromptFile).mockReturnValue({
 			filePath: '/src/prompts/list.prompt.md',
@@ -260,9 +256,7 @@ describe('runSchema', () => {
 			source: '/src/prompts',
 			output: '/src/generated',
 		});
-		vi.mocked(scanPromptFiles).mockReturnValue([
-			'/src/prompts/mood.prompt.md',
-		]);
+		vi.mocked(scanPromptFiles).mockReturnValue(['/src/prompts/mood.prompt.md']);
 		vi.mocked(readFileSync).mockReturnValue('file content');
 		vi.mocked(parsePromptFile).mockReturnValue({
 			filePath: '/src/prompts/mood.prompt.md',

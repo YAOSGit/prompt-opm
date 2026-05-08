@@ -36,7 +36,9 @@ export function resolveSnippets(
 			file.filePath,
 			sourceRoot,
 		);
-		resolvedDependencies.push(snippetPath);
+		if (!resolvedDependencies.includes(snippetPath)) {
+			resolvedDependencies.push(snippetPath);
+		}
 
 		const content = readFileSync(snippetPath, 'utf-8');
 		const snippetFile = parsePromptFile(content, snippetPath);
@@ -52,7 +54,11 @@ export function resolveSnippets(
 
 		const resolved = resolveSnippets(snippetFile, sourceRoot, new Set(visited));
 		warnings.push(...resolved.warnings);
-		resolvedDependencies.push(...resolved.resolvedDependencies);
+		for (const dep of resolved.resolvedDependencies) {
+			if (!resolvedDependencies.includes(dep)) {
+				resolvedDependencies.push(dep);
+			}
+		}
 
 		for (const [key, type] of Object.entries(resolved.mergedInputs)) {
 			if (mergedInputs[key] && !isEqual(mergedInputs[key], type)) {

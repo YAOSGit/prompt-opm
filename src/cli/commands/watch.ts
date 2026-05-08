@@ -43,7 +43,11 @@ export function runWatch(cwd: string): void {
 					`Generated ${chalk.green(result.generated)} file(s), skipped ${chalk.dim(String(result.skipped))} unchanged.`,
 				);
 			} catch (err) {
-				console.error(chalk.red(`Watch regeneration failed: ${err instanceof Error ? err.message : String(err)}`));
+				console.error(
+					chalk.red(
+						`Watch regeneration failed: ${err instanceof Error ? err.message : String(err)}`,
+					),
+				);
 			}
 		}, DEBOUNCE_DELAY_MS);
 	});
